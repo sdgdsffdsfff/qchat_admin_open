@@ -759,12 +759,6 @@
             <version>RELEASE</version>
             <scope>compile</scope>
         </dependency>
-        <dependency>
-            <groupId>com.aliasi</groupId>
-            <artifactId>lingpipe</artifactId>
-            <version>3.9.1</version>
-        </dependency>
-
         <!--ss.common依赖-->
         <dependency>
             <groupId>com.google.guava</groupId>
