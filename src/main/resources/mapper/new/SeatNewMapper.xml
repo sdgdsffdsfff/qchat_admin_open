@@ -58,9 +58,7 @@
         robot_info.update_time as updateTime,
         robot_info.operator,
         robot_info.imageurl,
-        robot_info.status,
-        quc.display_type as displayType from robot_info left join
-        qchat_user_config quc on robot_info.robot_id = quc.user_id
+        robot_info.status from robot_info
         where robot_info.status = 1 and robot_info.robot_id=#{robotid} order by robot_info.create_time desc limit 1;
     </select>
 

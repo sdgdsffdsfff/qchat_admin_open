@@ -190,13 +190,13 @@ public class SessionDaoImpl extends BaseSqlSessionDao implements ISessionDao {
 
             getWriteSqlSession().update("SessionMapping.updateSession", session);
 
-            if (!Objects.equals(ss.getSession_state(), session.getSession_state())) {
-                Map<String, Object> param1 = Maps.newHashMap();
-                param1.put("sessionid", ss.getSession_id());
-                param1.put("oldstat", ss.getSession_state());
-                param1.put("newstat", session.getSession_state());
-                getWriteSqlSession().insert("SessionLogMapping.insertSessionLog", param1);
-            }
+//            if (!Objects.equals(ss.getSession_state(), session.getSession_state())) {
+//                Map<String, Object> param1 = Maps.newHashMap();
+//                param1.put("sessionid", ss.getSession_id());
+//                param1.put("oldstat", ss.getSession_state());
+//                param1.put("newstat", session.getSession_state());
+//                getWriteSqlSession().insert("SessionLogMapping.insertSessionLog", param1);
+//            }
         } else {
             insertSession(session);
         }

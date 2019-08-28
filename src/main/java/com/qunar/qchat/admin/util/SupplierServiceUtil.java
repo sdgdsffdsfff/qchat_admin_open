@@ -112,7 +112,7 @@ public class SupplierServiceUtil {
                 anonyInfo.put("nickname", robot.getRobotName());
                 anonyInfo.put("webname", robot.getRobotName());
                 anonyInfo.put("uid",0);
-                anonyInfo.put("displaytype",robot.getDisplayType());
+                anonyInfo.put("displaytype",1);
                 anonyInfo.put("mobile","");
                 anonyInfo.put("prenum","");
                 anonyInfo.put("status",1);
