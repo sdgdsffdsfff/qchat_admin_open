@@ -15,12 +15,14 @@
 				<li class="active">
 					<a href="#">客服管理</a>
 				</li>
+				<!-- 
 				<li>
 					<a href="javascript:void(0)" ms-click="toSmartConsult">智能客服选项</a>
 				</li>
 				<li ms-if="isSupplierService">
 					<a href="javascript:void(0)" ms-click="toSupplierFAQ">服务设置</a>
 				</li>
+				-->
 			</div>
 		</div>
 	</div>
@@ -28,7 +30,7 @@
 		<div class="m-sub-nav clearfix">
 			<div class="m-subnav-list">
 				<li class="active">
-					<a href="javascript:;" data-rel="shopList" ms-click="changeTab">店铺22管理</a>
+					<a href="javascript:;" data-rel="shopList" ms-click="changeTab">店铺管理</a>
 				</li>
 				<li>
 					<a href="javascript:;" data-rel="waiterList" ms-click="changeTab">客服列表</a>
