@@ -21,7 +21,7 @@ a,ins,s,u,del{text-decoration:none}
 sup,sub{vertical-align:baseline}
 #header{width:1200px;margin:25px auto;border:1px solid #fff}
 #m-title{font-weight:bold;font-size:20px;margin-top:25px}
-.ty_logo{float:left;background:url(../../../public/img/logo.png) no-repeat;width:140px;height:50px}
+.ty_logo{float:left;background:url(/public/img/logo.png) no-repeat;width:140px;height:50px}
 .hide{display:none}
 #footer{width:1200px;margin:auto}
 .oni-helper-hidden{display:none}
@@ -112,7 +112,7 @@ div.oni-loading{position:absolute}
 .oni-dialog .oni-dialog-inner .oni-dialog-footer{padding:8px 5px;background-color:#f8f8f8}
 .oni-dialog .oni-dialog-inner .oni-dialog-footer .oni-dialog-btns{display:inline;display:inline;float:right;font-size:0}
 .oni-dialog .oni-dialog-inner .oni-dialog-footer .oni-dialog-btns .oni-button{margin-left:10px}
-.oni-dialog-layout{display:none;*position:absolute;left:0;top:0;bottom:0;right:0;filter:alpha(opacity=60);opacity:.6;zoom:1;z-index:1;background:#000}
+.oni-dialog-layout{display:none;position:absolute;left:0;top:0;bottom:0;right:0;filter:alpha(opacity=60);opacity:.6;zoom:1;z-index:1;background:#000}
 button.oni-button,input.oni-button{height:26px}
 button.oni-button .oni-icon,button.oni-button .oni-button-text,input.oni-button .oni-icon,input.oni-button .oni-button-text{*margin-top:-2px}
 .oni-button{display:-moz-inline-stack;display:inline-block;vertical-align:middle;*vertical-align:auto;zoom:1;*display:inline;overflow:hidden;_display:inline;padding:0 10px;margin:0;font-size:12px;border:1px solid transparent;text-align:center;vertical-align:middle;cursor:pointer;color:#333;text-decoration:none;outline:0;height:24px;font-family:fontawesome}
@@ -338,7 +338,7 @@ button.oni-button-large,input.oni-button-large{height:40px}
 .services-setting .container .message{width:50%;margin-bottom:10px;padding:3px 5px}
 .services-setting .container .welcome-item{margin-top:10px}
 .services-setting .container .save-btn{position:relative;left:50%;margin-left:-46px;margin-top:20px;padding:6px 20px;border-radius:4px;border:0;font-size:13px;color:#fff;cursor:pointer;background-color:#1fbcd2}
-.services-setting .welcome-star{display:inline-block;width:12px;height:12px;background:url("../../../public/img/star.png") no-repeat;background-size:100%}
+.services-setting .welcome-star{display:inline-block;width:12px;height:12px;background:url("/public/img/star.png") no-repeat;background-size:100%}
 .services-setting .welcome-message-container{margin:10px 0 0 30px}
 .confirm_account{text-align:center}
 .confirm_account .desc{margin-bottom:10px;font-size:12px}
@@ -389,7 +389,7 @@ table{width:100%}
 .waiter{width:100%;word-break:break-all;word-wrap:break-word;color:#3089d5}
 .m-session-more{display:block;width:90px;line-height:20px;position:absolute;top:35px;left:50%;margin-left:-45px;cursor:pointer;z-index:100}
 #sessionDetial .oni-dialog-footer{visibility:hidden}
-.success-tip{display:inline-block;margin-left:10px;width:20px;height:20px;vertical-align:-3px;background:url(../../../public/img/right.png) no-repeat 0 2px;background-size:100% 100%}
+.success-tip{display:inline-block;margin-left:10px;width:20px;height:20px;vertical-align:-3px;background:url(/public/img/right.png) no-repeat 0 2px;background-size:100% 100%}
 .successinfo{color:#390}
 .info-msg{padding-left:20px;width:930px;margin:30px auto;text-align:left;font-size:14px}
 .weixin_label{margin-top:40px;margin-bottom:10px;color:#666}
@@ -404,3 +404,4 @@ h2.title{height:32px;display:block;border-left:4px solid #34afc1;background:#f1f
 .add-success{color:#390}
 .add-wait{color:#f88}
 .m-filter-row{max-width:100%}
+.self-gm-group{overflow:auto;height:auto}
