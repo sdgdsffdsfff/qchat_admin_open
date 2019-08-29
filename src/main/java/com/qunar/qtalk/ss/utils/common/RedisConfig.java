@@ -25,16 +25,19 @@ public class RedisConfig {
         jedisPoolConfig.setTestOnReturn(builder.isTestOnReturn);
         jedisPoolConfig.setTestOnBorrow(builder.isTestOnBorrow);
 
-        RedisSentinelConfiguration redisSentinelConfiguration = new RedisSentinelConfiguration();
-        redisSentinelConfiguration.setMaster(TextUtils.isEmpty(builder.masterName) ? Config.REDIS_SENTINEL_MASTER : builder.masterName);
-        if (builder.redisNodes.size() == 0) {
-            builder.redisNodes.add(new RedisNode(Config.REDIS_SENTINEL_HOST1, Config.REDIS_SENTINEL_PORT));
-            builder.redisNodes.add(new RedisNode(Config.REDIS_SENTINEL_HOST2, Config.REDIS_SENTINEL_PORT));
-        }
-        redisSentinelConfiguration.setSentinels(builder.redisNodes);
+//        RedisSentinelConfiguration redisSentinelConfiguration = new RedisSentinelConfiguration();
+//        redisSentinelConfiguration.setMaster(TextUtils.isEmpty(builder.masterName) ? Config.REDIS_SENTINEL_MASTER : builder.masterName);
+//        if (builder.redisNodes.size() == 0) {
+//            builder.redisNodes.add(new RedisNode(Config.REDIS_SENTINEL_HOST1, Config.REDIS_SENTINEL_PORT));
+//            builder.redisNodes.add(new RedisNode(Config.REDIS_SENTINEL_HOST2, Config.REDIS_SENTINEL_PORT));
+//        }
+//        redisSentinelConfiguration.setSentinels(builder.redisNodes);
 
-        jedisConnectionFactory = new JedisConnectionFactory(redisSentinelConfiguration, jedisPoolConfig);
-        jedisConnectionFactory.setPassword(TextUtils.isEmpty(builder.password) ? Config.REDIS_SENTINEL_PASS : builder.password);
+        jedisConnectionFactory = new JedisConnectionFactory(jedisPoolConfig);
+        jedisConnectionFactory.setHostName(Config.REDIS_HOST);
+        jedisConnectionFactory.setPort(Config.REDIS_PORT);
+        jedisConnectionFactory.setPassword(Config.REDIS_PASS);
+        jedisConnectionFactory.setDatabase(Config.REDIS_DATABASE);
         jedisConnectionFactory.afterPropertiesSet();
     }
 

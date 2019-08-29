@@ -1,5 +1,6 @@
 package com.qunar.qtalk.ss.utils.common;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,9 +22,9 @@ public class Config {
     private static Properties props;
 
     public static final String REDIS_HOST = getProperty("redis.host");
-    public static final String REDIS_PORT = getProperty("redis.port");
+    public static final int REDIS_PORT = getIntProperty("redis.port",6379);
     public static final String REDIS_PASS = getProperty("redis.pass");
-    public static final String REDIS_DATABASE = getProperty("redis.database");
+    public static final int REDIS_DATABASE = getIntProperty("redis.database",0);
 
     public static final int REDIS_POOL_MAXIDLE = getIntProperty("redis.pool.maxIdle", 10);
     public static final int REDIS_POOL_MAXACTIVE = getIntProperty("redis.pool.maxActive", 10);
@@ -88,7 +89,7 @@ public class Config {
 
         int val = defaultVal;
         String valStr = getProperty(name);
-        if (valStr != null) {
+        if (valStr != null && StringUtils.isNumeric(valStr)) {
             val = Integer.parseInt(valStr);
         }
         return val;

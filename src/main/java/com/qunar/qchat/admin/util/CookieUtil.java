@@ -1,10 +1,10 @@
 package com.qunar.qchat.admin.util;
 
-import com.aliasi.util.Strings;
 import com.google.common.collect.Maps;
 import com.qunar.qchat.admin.constants.SessionConstants;
 import com.qunar.qchat.admin.model.qchat.QChatConstant;
 import com.qunar.qtalk.ss.constants.Config;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.util.TextUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,9 +65,9 @@ public class CookieUtil {
                         Map<String,Object> kvs = Maps.newHashMap();
                         // t=1524626533&u=ykxuarx1597&k=DB59A14245F002B24F294F3CCE7547B2&d=ejabhost2
                         cookieqckey = Arrays.toString(Base64.decode(cookieqckey));
-                        String[] split = Strings.split(cookieqckey, '&');
+                        String[] split = StringUtils.split(cookieqckey, '&');
                         for (String s : split){
-                            String[] kv = Strings.split(s,'=');
+                            String[] kv = StringUtils.split(s,'=');
                             kvs.put(kv[0],kv[1]);
                         }
 
