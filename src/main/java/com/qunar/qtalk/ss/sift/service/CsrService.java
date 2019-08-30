@@ -113,9 +113,5 @@ public class CsrService {
         return updateSeat == 1;
     }
 
-    public List<CSR> selectCsrByCsrNameAndShopIdWithoutStatus(String qunarName, long shopId) {
-        List<CSR> csrList = csrDao.selectCsrByCsrNameAndShopIdWithoutStatus(qunarName, shopId);
-        LOGGER.info("WithoutStatus qunarName:{} shopId:{} 获取的客服列表有：{}", qunarName, shopId, JacksonUtil.obj2String(csrList));
-        return csrList;
-    }
+
 }

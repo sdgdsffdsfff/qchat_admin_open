@@ -43,27 +43,27 @@
         select
         <include refid="csr"/>
         from seat
-        where supplier_id = #{shopId} AND host=#{host} and status = 1
+        where supplier_id = #{shopId} and status = 1
     </select>
 
     <select id="selectCsrsByCsrName" resultMap="CsrMap">
         select
         <include refid="csr"/>
         from seat
-        where qunar_name = #{qunarName} AND host=#{host} and status = 1;
+        where qunar_name = #{qunarName} and status = 1;
     </select>
 
     <select id="selectCsrByCsrNameAndShopId" resultMap="CsrMap">
         select
         <include refid="csr"/>
         from seat
-        where qunar_name = #{qunarName} AND supplier_id = #{shopId} AND host=#{host} and status = 1;
+        where qunar_name = #{qunarName} AND supplier_id = #{shopId} and status = 1;
     </select>
 
     <select id="selectCsrsByGroupIDs" resultMap="CsrMap">
         select distinct seat.qunar_name, seat.id, seat.web_name, seat.nickname,seat.face_link, seat.supplier_id, seat.priority, seat.create_time, seat.last_update_time,seat.old_supplier_id, seat.old_id, seat.service_status, seat.status, seat.max_user,seat.bind_wx, seat.host
         from seat,seat_group_mapping
-        where seat.id = seat_group_mapping.seat_id AND seat.host=#{host} AND seat.status = 1  and seat_group_mapping.group_id in
+        where seat.id = seat_group_mapping.seat_id AND seat.status = 1  and seat_group_mapping.group_id in
         <if test="list != null and list.size() > 0">
             <foreach collection="list" open="(" close=")" separator="," item="groupId">
                 #{groupId}
@@ -74,14 +74,14 @@
     <select id="selectCsrsByShopIdWithoutCarName" resultMap="CsrMap">
         select
         <include refid="csr"/>
-        from seat where supplier_id =#{shopId} and status=1 and qunar_name!=#{csrName} AND seat.host=#{host};
+        from seat where supplier_id =#{shopId} and status=1 and qunar_name!=#{csrName};
     </select>
 
     <select id="selectCsrsByCsrBusiIdAndHost" resultMap="CsrMap">
         select
         seat.id,seat.qunar_name,seat.web_name,seat.nickname,seat.face_link,seat.supplier_id,seat.priority,seat.create_time,seat.last_update_time,seat.status,seat.max_user,seat.bind_wx,seat.host
         from hotline_seat_mapping hsm,seat
-        where seat.id=hsm.seat_id and seat.host=#{host} and seat.status =1 and hsm.busi_id=#{busiId} and hsm.status=1;
+        where seat.id=hsm.seat_id and seat.status =1 and hsm.busi_id=#{busiId} and hsm.status=1;
     </select>
 
     <insert id="saveSeat" parameterType="com.qunar.qchat.admin.model.Seat" useGeneratedKeys="true">
@@ -91,13 +91,6 @@
             SELECT currval('seat_id_seq')
         </selectKey>
     </insert>
-
-    <select id="selectCsrByCsrNameAndShopIdWithoutStatus" resultMap="CsrMap">
-        select
-        <include refid="csr"/>
-        from seat
-        where qunar_name = #{qunarName} AND supplier_id = #{shopId} AND host='ejabhost1';
-    </select>
 
     <update id="updateSeatByShopId">
         UPDATE seat set status=0 where supplier_id=#{shopId}

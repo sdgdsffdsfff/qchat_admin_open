@@ -88,8 +88,6 @@ public class SeatAPIController extends BaseController {
     CsrService csrService;
 
 
-    private static final String QCHAT_HOST = "@ejabhost2";
-    private static final String QTALK_HOST = "@ejabhost1";
 
 
     @RequestMapping(value = "/list.do")
@@ -656,8 +654,7 @@ public class SeatAPIController extends BaseController {
         try {
             logger.info("judgementOrRedistributionEx函数 judgmentOrRedistributionEx.json  shopid {}, seatQName:{},userQName:{}", shopId, seatQName, userQName);;
 
-            String supplierId = shopId.replace(Supplier.SHOPID_PREFIX, "").replace(QCHAT_HOST, "").replace(QTALK_HOST,
-                    "");
+            String supplierId = shopId.replace(Supplier.SHOPID_PREFIX, "").replace(com.qunar.qtalk.ss.constants.Config.QCHAT_DEFAULT_HOST, "");
             if (!shopId.startsWith(Supplier.SHOPID_PREFIX) || Long.valueOf(supplierId) <= 0) {
                 logger.info("judgementOrRedistributionEx函数 judgmentOrRedistributionEx.json  shopid {}, 店铺id错误", shopId);
                 return JsonData.error(shopId + "，店铺id错误");
@@ -773,8 +770,7 @@ public class SeatAPIController extends BaseController {
             if (StringUtils.isEmpty(shopId)) {
                 return JsonData.error("店铺id错误");
             }
-            String supplierId = shopId.replace(Supplier.SHOPID_PREFIX, "").replace(QCHAT_HOST, "").replace(QTALK_HOST,
-                    "");
+            String supplierId = shopId.replace(Supplier.SHOPID_PREFIX, "").replace(com.qunar.qtalk.ss.constants.Config.QCHAT_DEFAULT_HOST, "");
             if (!shopId.startsWith(Supplier.SHOPID_PREFIX) || Long.valueOf(supplierId) <= 0) {
                 logger.info("judgementOrRedistribution函数 judgmentOrRedistributionEx.json 店铺id错误 shopId:{},seatQName:{},userQName:{}", shopId, seatQName, userQName);
                 return JsonData.error(shopId + "，店铺id错误");

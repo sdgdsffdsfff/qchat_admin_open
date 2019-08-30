@@ -275,30 +275,6 @@ public class ManageController extends BaseController {
     }
 
 
-    @RequestMapping(value = "/addSupplier.qunar")
-    @ResponseBody
-    @RecordAccessLog
-    public JsonData addSupplier() {
-        SupplierVO supplier2 = new SupplierVO();
-        supplier2.setName("IT热线");
-        supplier2.setQunarNameList(Arrays.asList("ywud2995"));
-        supplier2.setBusiSupplierId("1");
-        supplier2.setBusiType(2000);
-//
-        Seat s1 = new Seat();
-        s1.setQunarName("wz.wang@ejabhost1");
-        s1.setWebName("");
-
-        List<Seat> seats = Lists.newArrayList();
-        seats.add(s1);
-        supplier2.setSeatList(seats);
-
-        BusiReturnResult r = supplierService.saveSupplier(supplier2);
-
-        return JsonData.success(r);
-    }
-
-
     @RequestMapping(value = "/yn_feedback.qunar")
     @ResponseBody
     public String ynFeedback(HttpServletRequest request) {

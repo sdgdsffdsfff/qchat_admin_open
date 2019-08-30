@@ -16,7 +16,7 @@ public class BusiShopMapping {
     private Date updateTime;
     //已经无用字段 为了跟数据库保持一致
     private String bsuIDType;
-    // 操作员id 例如helen.liu@ejabhost1
+    // 操作员id
     private String supplierOperator;
     // 操作员中文名
     private String operatorWebname;

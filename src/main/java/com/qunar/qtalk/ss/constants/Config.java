@@ -27,6 +27,8 @@ public class Config {
     public static final int Consult_SeatsNotifyTime = Integer.parseInt(getProperty("qchat.consult.seat.notify.time", "120")) * 1000;
     public static final int Consult_CustomerNotifyTime = Integer.parseInt(getProperty("qchat.consult.customer.notify.time", "900")) * 1000;
     public static final String QCHAT_COOKIE_DOMAIN = getProperty("qchat.cookie.domain", "127.0.0.1");
+    public static final String QCHAT_DEFAULT_HOST = getProperty("qchat.default.host", "ejabhost2");
+    public static final String QCHAT_PREFIX_HOST = "@" + QCHAT_DEFAULT_HOST;
 
     public static final int Consult_ReleasedTime = Integer.parseInt(getProperty("qchat.consult.released.time", "900")) * 1000;
     public static final int Consult_RecycledTime = Integer.parseInt(getProperty("qchat.consult.recycled.time", "86400")) * 1000;

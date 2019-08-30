@@ -25,7 +25,7 @@ public class SendMessage {
 
     public static String appendQCDomain(String str) {
         if (!StringUtils.contains(str, "@")) {
-            return StringUtils.join(str, "@ejabhost2");
+            return StringUtils.join(str, Config.QCHAT_PREFIX_HOST);
         } else {
             return str;
         }

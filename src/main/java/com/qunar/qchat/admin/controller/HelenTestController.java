@@ -2,6 +2,7 @@ package com.qunar.qchat.admin.controller;
 
 import com.qunar.qchat.admin.util.JacksonUtil;
 import com.qunar.qchat.admin.vo.conf.JsonData;
+import com.qunar.qtalk.ss.constants.Config;
 import com.qunar.qtalk.ss.sift.entity.CSR;
 import com.qunar.qtalk.ss.sift.entity.HotlineSupplierMapping;
 import com.qunar.qtalk.ss.sift.model.DistributedInfo;
@@ -39,13 +40,13 @@ public class HelenTestController {
         JID fromJid = null;
         if (StringUtils.isNotEmpty(csrQunarName)) {
             if (!csrQunarName.contains("@")) {
-                csrQunarName = String.format("%s@%s", csrQunarName, "ejabhost2");
+                csrQunarName = String.format("%s@%s", csrQunarName, Config.QCHAT_DEFAULT_HOST);
             }
             fromJid = JID.parseAsJID(csrQunarName);
         }
 
         DistributedInfo distributedInfo =
-                siftStrategyService.siftCsr(productID, new Long(shopID), fromJid,"ejabhost2", new Boolean(isTranAs));
+                siftStrategyService.siftCsr(productID, new Long(shopID), fromJid,Config.QCHAT_DEFAULT_HOST, new Boolean(isTranAs));
 
         CSR csr = distributedInfo == null ? null : distributedInfo.getCsr();
         return csr;

@@ -28,5 +28,5 @@ public interface CsrDao {
 
     int updateSeatStatusByShopIdAndName(@Param("shopId")long shopId, @Param("qunarName") String qunarName);
 
-    List<CSR> selectCsrByCsrNameAndShopIdWithoutStatus(@Param("qunarName") String qunarName, @Param("shopId") long shopId);
+
 }

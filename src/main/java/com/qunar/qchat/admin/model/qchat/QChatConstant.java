@@ -1,5 +1,7 @@
 package com.qunar.qchat.admin.model.qchat;
 
+import com.qunar.qtalk.ss.constants.Config;
+
 /**
  * Created by yinmengwang on 17-5-19.
  */
@@ -12,13 +14,13 @@ public interface QChatConstant {
 
 
     // host
-    String QCHAR_HOST = "ejabhost2";
+    String QCHAR_HOST = Config.QCHAT_DEFAULT_HOST;
     String QTALK_HOST = "ejabhost1";
 
-    String DEFAULT_HOST = "ejabhost2";
+    String DEFAULT_HOST = Config.QCHAT_DEFAULT_HOST;;
 
     // domain
-    String QCHAT_HOST_POSTFIX = "@ejabhost2";
+    String QCHAT_HOST_POSTFIX = Config.QCHAT_PREFIX_HOST;
     String QTALK_DOMAIN_POSTFIX = "@ejabhost1";
 
     interface Note {

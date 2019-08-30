@@ -130,29 +130,7 @@ public class HotlineSupplierService {
         return JsonData.success(result);
     }
 
-    public JsonData changeHotlineSeat(String qunarName, long shopId) {
-        if (shopId < 1) {
-            return JsonData.error("shopId error");
-        }
-        boolean updateSeat = csrService.updateSeatByShopId(shopId);
-        logger.info("updateSeat result:{}", updateSeat);
-        List<CSR> csrList = csrService.selectCsrByCsrNameAndShopIdWithoutStatus(qunarName, shopId);
-        if (CollectionUtils.isNotEmpty(csrList)) {
-            boolean updateSeatStatus = csrService.updateSeatStatusByShopIdAndName(shopId, qunarName);
-            logger.info("updateSeatStatus result:{}", updateSeatStatus);
-        } else {
-            Seat seat = new Seat();
-            seat.setQunarName(qunarName);
-            seat.setSupplierId(shopId);
-            seat.setWebName(qunarName);
-            seat.setServiceStatus(4);
-            seat.setHost(QChatConstant.QTALK_HOST);
-            boolean saveSeatResult = csrService.saveSeat(seat);
-            logger.info("saveSeatResult result:{}", saveSeatResult);
-        }
 
-        return JsonData.success("success");
-    }
 
 
 //    private boolean sendPresence(String hotline, String seat_id, String category, String body) {

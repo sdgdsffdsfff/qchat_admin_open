@@ -35,7 +35,6 @@ public class QtQueueDao {
         LinkedList<Map.Entry<String, Timestamp>> resultList = new LinkedList<>();
         try {
 
-//            select max(distributed_time) as time, seat_name from queue_mapping where shop_id = ? and seat_name in('axzbfwx5053@ejabhost2', 'asdfsdf')  group by seat_name order by time desc;
 
             String sql = "select max(distributed_time) as time, seat_name from queue_mapping where shop_id = ? and seat_name in(";
 

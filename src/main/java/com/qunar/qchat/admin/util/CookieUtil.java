@@ -63,7 +63,7 @@ public class CookieUtil {
                     String cookieqckey = cookie.getValue();
                     try {
                         Map<String,Object> kvs = Maps.newHashMap();
-                        // t=1524626533&u=ykxuarx1597&k=DB59A14245F002B24F294F3CCE7547B2&d=ejabhost2
+                        // t=1524626533&u=ykxuarx1597&k=DB59A14245F002B24F294F3CCE7547B2
                         cookieqckey = Arrays.toString(Base64.decode(cookieqckey));
                         String[] split = StringUtils.split(cookieqckey, '&');
                         for (String s : split){

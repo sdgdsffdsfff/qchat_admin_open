@@ -81,13 +81,6 @@ public class NewApiController {
         return mapping;
     }
 
-    @RequestMapping("/updateHotlineSeat.qunar")
-    @ResponseBody
-    public JsonData updateHotlineSeat(
-            @RequestParam(value = "seatName") String seatName,
-            @RequestParam(value = "shopId") long shopId) {
-        LOGGER.info("updateHotlineSeat begin");
-        return hotlineSupplierService.changeHotlineSeat(seatName, shopId);
-    }
+
 
 }

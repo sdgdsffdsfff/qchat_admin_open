@@ -111,16 +111,7 @@ public class SeatServiceImpl implements ISeatService {
     @Autowired
     QueueMappingDao queueMappingDao;
 
-//    private static final String DOMAIN1_NAME = "ejabhost1";
-//    private static final String HOTEL_SETTLEMENT_SUPPLIERID = "0";
-//    private static final long DEFAULT_FOR_NULL_TIME = new Date(0).getTime();
 
-//    private static final Function<SeatAndGroup, String> getQunarName = new Function<SeatAndGroup, String>() {
-//        @Override
-//        public String apply(SeatAndGroup seatAndGroup) {
-//            return seatAndGroup.getQunarName();
-//        }
-//    };
 
     private static final Function<SeatWithStateVO, String> getSeatName = new Function<SeatWithStateVO, String>() {
         @Override
