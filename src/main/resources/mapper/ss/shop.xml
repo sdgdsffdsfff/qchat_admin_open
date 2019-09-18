@@ -89,4 +89,17 @@
         </selectKey>
     </insert>
 
+    <resultMap id="supplierGroup" type="com.qunar.qchat.admin.model.SupplierSeatGroup">
+        <result column="supplierName" property="supplierName" jdbcType="VARCHAR"/>
+        <result column="supplierId" property="supplierId" jdbcType="INTEGER"/>
+        <collection property="seatGroups" ofType="com.qunar.qchat.admin.model.SeatGroupVO">
+            <result column="groupName" property="groupName" jdbcType="VARCHAR"/>
+            <result column="groupId" property="groupId" jdbcType="INTEGER"/>
+        </collection>
+    </resultMap>
+
+    <select id="selectSupplierGroup" resultMap="supplierGroup">
+        SELECT supplier.id as supplierId, supplier.name as supplierName, seat_group.id as groupId, seat_group.name as groupName
+        from supplier ,seat_group where supplier.id= seat_group.supplier_id and supplier.status=1;
+    </select>
 </mapper>

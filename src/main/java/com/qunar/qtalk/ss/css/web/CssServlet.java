@@ -163,7 +163,7 @@ public class CssServlet extends QTalkBaseServlet {
 
         logger.debug("judgmentOrRedistribution, {} - {} - {}", fromJid, Long.parseLong(shopId), productId);
 
-        QtSessionItem sessionItem = QtQueueManager.getInstance().judgmentOrRedistribution(fromJid, Long.parseLong(shopId), productId, host, isEx, false);
+        QtSessionItem sessionItem = QtQueueManager.getInstance().judgmentOrRedistribution(fromJid, Long.parseLong(shopId), productId, host,null, isEx, false);
 
         CSR csr = null;
 

@@ -1167,6 +1167,7 @@ public class SeatServiceImpl implements ISeatService {
 
     @Override
     public Map<String, ?> getNewUserAndSeatInfo(List<String> qunarNames, String fields) {
+        try {
         // 过滤店铺id
         List<Map<String, Object>> userInfoList = Lists.newArrayList();
 
@@ -1209,46 +1210,46 @@ public class SeatServiceImpl implements ISeatService {
                 userInfoList.addAll(robots);
         }
 
-        Map<String, ?> UserInfoMap = getUserInfoByQunarNames(qunarNames, fields);
-        if (CollectionUtil.isEmpty(UserInfoMap)) {
-            if (CollectionUtil.isEmpty(userInfoList)) {
-                return null;
-            } else {
-                return parseData(qunarNames, userInfoList);//JacksonUtil.string2Map(JacksonUtil.obj2String(JsonData.success(userInfoList)));
-            }
-        }
-
-
-        try {
-            @SuppressWarnings("unchecked") List<Map<String, Object>> userInfos
-                    = (List<Map<String, Object>>) UserInfoMap.get("data");
-            if (!CollectionUtil.isEmpty(userInfos)) {
-
-                for (Map<String, Object> userinfo : userInfos) {
-                    if(userinfo != null) {
-                        if (userinfo.containsKey("nickname") && userinfo.containsKey("username")) {
-                            String nickname = userinfo.get("nickname") == null ? "" : userinfo.get("nickname").toString();
-                            String username = userinfo.get("username") == null ? "" : userinfo.get("username").toString();
-                            // 识别 nickname 为  a***z 这种类型的显示，用username代替
-                            if (!Strings.isNullOrEmpty(username)) {
-                                username = username.charAt(0) + "***" + username.charAt(username.length() - 1);
-                                if (username.equalsIgnoreCase(nickname)) {
-                                    userinfo.put("nickname", userinfo.get("username"));
-                                }
-                            }
-                        }
-                    }
-                }
-
-                userInfoList.addAll(userInfos);
-            }
-
-
-            CollectionUtil.filterNull(userInfoList);
-
-            if (CollectionUtil.isEmpty(userInfoList)) {
-                return null;
-            }
+//        Map<String, ?> UserInfoMap = getUserInfoByQunarNames(qunarNames, fields);
+//        if (CollectionUtil.isEmpty(UserInfoMap)) {
+//            if (CollectionUtil.isEmpty(userInfoList)) {
+//                return null;
+//            } else {
+//                return parseData(qunarNames, userInfoList);//JacksonUtil.string2Map(JacksonUtil.obj2String(JsonData.success(userInfoList)));
+//            }
+//        }
+//
+//
+//        try {
+//            @SuppressWarnings("unchecked") List<Map<String, Object>> userInfos
+//                    = (List<Map<String, Object>>) UserInfoMap.get("data");
+//            if (!CollectionUtil.isEmpty(userInfos)) {
+//
+//                for (Map<String, Object> userinfo : userInfos) {
+//                    if(userinfo != null) {
+//                        if (userinfo.containsKey("nickname") && userinfo.containsKey("username")) {
+//                            String nickname = userinfo.get("nickname") == null ? "" : userinfo.get("nickname").toString();
+//                            String username = userinfo.get("username") == null ? "" : userinfo.get("username").toString();
+//                            // 识别 nickname 为  a***z 这种类型的显示，用username代替
+//                            if (!Strings.isNullOrEmpty(username)) {
+//                                username = username.charAt(0) + "***" + username.charAt(username.length() - 1);
+//                                if (username.equalsIgnoreCase(nickname)) {
+//                                    userinfo.put("nickname", userinfo.get("username"));
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
+//
+//                userInfoList.addAll(userInfos);
+//            }
+//
+//
+//            CollectionUtil.filterNull(userInfoList);
+//
+//            if (CollectionUtil.isEmpty(userInfoList)) {
+//                return null;
+//            }
 
             Map<String, Seat> seatIndexMap = getSeatIndex(getSeatListByQunarNames(qunarNames));
             if (CollectionUtil.isEmpty(seatIndexMap)) {
@@ -1256,17 +1257,26 @@ public class SeatServiceImpl implements ISeatService {
                     return parseData(qunarNames, userInfoList);//JacksonUtil.string2Map(JacksonUtil.obj2String(JsonData.success(userInfoList)));
                 }
                 return null;
-            }
-            for (Map<String, Object> map : userInfoList) {
-                String username = (String) map.get("username");
-                Seat seat = seatIndexMap.get(username);
-                if (seat != null) {
-                    map.put("webname", seat.getWebName());
-                    map.put("suppliername", seat.getSupplierName());
+            } else {
+                for (Map.Entry<String, Seat> entrySet: seatIndexMap.entrySet()) {
+                    Map<String, Object> map = new HashMap<>();
+                    map.put("username", entrySet.getKey());
+                    map.put("webname", entrySet.getValue().getWebName());
+                    map.put("suppliername", entrySet.getValue().getSupplierName());
+                    userInfoList.add(map);
                 }
-                if (null != map.get("username") && !Strings.isNullOrEmpty(map.get("username").toString()))
-                    map.put("username", map.get("username").toString().toLowerCase());
+
             }
+//            for (Map<String, Object> map : userInfoList) {
+//                String username = (String) map.get("username");
+//                Seat seat = seatIndexMap.get(username);
+//                if (seat != null) {
+//                    map.put("webname", seat.getWebName());
+//                    map.put("suppliername", seat.getSupplierName());
+//                }
+//                if (null != map.get("username") && !Strings.isNullOrEmpty(map.get("username").toString()))
+//                    map.put("username", map.get("username").toString().toLowerCase());
+//            }
             return parseData(qunarNames, userInfoList);//JacksonUtil.string2Map(JacksonUtil.obj2String(JsonData.success(userInfoList)));
         } catch (Exception e) {
             logger.info("get user info error", e);
@@ -2245,7 +2255,7 @@ public class SeatServiceImpl implements ISeatService {
         supplier.setHotline(hotline);
 
         SeatWithStateVO seatWithStateVO = new SeatWithStateVO();
-        DistributedInfo distributedInfo = siftStrategyService.siftCsr(pid, supplier.getId(), null, host, false);
+        DistributedInfo distributedInfo = siftStrategyService.siftCsr(pid, supplier.getId(), null, host, null, false);
         logger.info("preAssignedOneSeat DistributedInfo:{}", JacksonUtil.obj2String(distributedInfo));
         if (distributedInfo != null && distributedInfo.getCsr() != null) {
             Seat seat = csrTransformSeat(distributedInfo.getCsr(), supplier.getName(), qunarName, pid);
@@ -2364,7 +2374,7 @@ public class SeatServiceImpl implements ISeatService {
     }
 
     @Override
-    public JsonData redistributionEx(long shopId, JID userQName, String pdtId, String seatQName, String host) {
+    public JsonData redistributionEx(long shopId, JID userQName, String pdtId, String seatQName, String host, Long groupId) {
         logger.debug("judgmentOrRedistribution, {} - {} - {}", userQName, shopId, pdtId);
         Supplier supplier = supplierDao.getSupplier(0, null, shopId);
 
@@ -2372,17 +2382,17 @@ public class SeatServiceImpl implements ISeatService {
             return JsonData.error("业务线错误");
         }
 
-        Robot robot = robotService.getRobotByBusiness(BusinessEnum.of(supplier.getbType()));
-        QueueMapping queueMapping = queueMappingDao.selectByCustomerNameAndShopId(userQName.toBareJID(), shopId);
-        if (queueMapping == null || robot == null || !queueMapping.getSeatName().startsWith(robot.getRobotId())) {
-            return JsonData.error("当前坐席不是机器人");
-        }
+//        Robot robot = robotService.getRobotByBusiness(BusinessEnum.of(supplier.getbType()));
+//        QueueMapping queueMapping = queueMappingDao.selectByCustomerNameAndShopId(userQName.toBareJID(), shopId);
+//        if (queueMapping == null || robot == null || !queueMapping.getSeatName().startsWith(robot.getRobotId())) {
+//            return JsonData.error("当前坐席不是机器人");
+//        }
 //
 //        if (robot != null && !robot.getRobotId().equalsIgnoreCase(seatQName)) {
 //            return JsonData.error("当前坐席不是机器人");
 //        }
 
-        QtSessionItem sessionItem = QtQueueManager.getInstance().judgmentOrRedistribution(userQName, shopId, pdtId, host,true, true);
+        QtSessionItem sessionItem = QtQueueManager.getInstance().judgmentOrRedistribution(userQName, shopId, pdtId, host, groupId, true, true);
 
         CSR csr = null;
         SeatWithStateVO seatWithStateVO = new SeatWithStateVO();
@@ -2405,12 +2415,12 @@ public class SeatServiceImpl implements ISeatService {
             seatWithStateVO.setOnlineState(OnlineState.ONLINE);
             seatWithStateVO.setSwitchOn(true);
 
-            String showName = StringUtils.isNotEmpty(seat.getWebName()) ? seat.getWebName()
-                    : (StringUtils.isNotEmpty(seat.getNickName()) ? seat.getNickName() : JID.parseAsJID(seat.getQunarName()).getNode());
+//            String showName = StringUtils.isNotEmpty(seat.getWebName()) ? seat.getWebName()
+//                    : (StringUtils.isNotEmpty(seat.getNickName()) ? seat.getNickName() : JID.parseAsJID(seat.getQunarName()).getNode());
 
-            sendSeatMsg(shopName, userQName, robot.getRobotId(), seat.getQunarName(), host, showName);
+          //  sendSeatMsg(shopName, userQName, robot.getRobotId(), seat.getQunarName(), host, showName);
         } else {
-            String robotId = SendMessage.appendQCDomain(robot.getRobotId(), host);
+            String robotId = SendMessage.appendQCDomain("robot", host);
             shopName = SendMessage.appendQCDomain(shopName, host);
             String toUserMsg = "当前店铺没有可服务客服，请稍后再试";
             ConsultUtils.sendMessage(JID.parseAsJID(shopName), userQName, JID.parseAsJID(robotId), userQName, toUserMsg, false, false, true);

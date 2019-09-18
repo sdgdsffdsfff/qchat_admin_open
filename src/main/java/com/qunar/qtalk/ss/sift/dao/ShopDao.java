@@ -1,5 +1,6 @@
 package com.qunar.qtalk.ss.sift.dao;
 
+import com.qunar.qchat.admin.model.SupplierSeatGroup;
 import com.qunar.qtalk.ss.sift.entity.Shop;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
@@ -22,6 +23,8 @@ public interface ShopDao {
     List<Shop> selectShopByBsiId(@Param("busiId") int busiId);
 
     List<Long> selectOtherShopIdsByIdAndQunarName(@Param("supplierId") long supplierId);
+
+    List<SupplierSeatGroup> selectSupplierGroup();
 
     int saveShop(Shop shop);
 

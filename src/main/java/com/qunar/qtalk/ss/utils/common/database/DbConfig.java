@@ -10,19 +10,19 @@ public class DbConfig {
     private String password;
 
     public static String getDbUrl(String configKey) {
-        String defineKey = String.format("%s.dburl", configKey);
+        String defineKey = String.format("%s.url", configKey);
         String connectionUrl = PropertiesUtil.getDBConfig().getProperty(defineKey);
         return connectionUrl;
     }
 
     public static String getUser(String configKey) {
-        String defineKey = String.format("%s.dbuser", configKey);
+        String defineKey = String.format("%s.user", configKey);
         String userName = PropertiesUtil.getDBConfig().getProperty(defineKey);
         return userName;
     }
 
     public static String getPassword(String configKey) {
-        String defineKey = String.format("%s.dbpassword", configKey);
+        String defineKey = String.format("%s.password", configKey);
         String userPass = PropertiesUtil.getDBConfig().getProperty(defineKey);
         return userPass;
     }

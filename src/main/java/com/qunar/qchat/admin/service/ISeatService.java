@@ -98,7 +98,7 @@ public interface ISeatService {
 
 //    SeatsResultVO<SeatWithStateVO> turnOnRealSeat(String pid,long supplierid,String userName);
 
-    JsonData redistributionEx(long shopId, JID userQName, String pdtId, String seatQName, String host);
+    JsonData redistributionEx(long shopId, JID userQName, String pdtId, String seatQName, String host, Long groupId);
 
     void transferReadSeat(String userName,String shopid,String fromSeatName,String toSeatName);
 

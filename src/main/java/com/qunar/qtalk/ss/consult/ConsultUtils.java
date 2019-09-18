@@ -2,9 +2,13 @@ package com.qunar.qtalk.ss.consult;
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Maps;
+import com.qunar.qchat.admin.constants.Config;
 import com.qunar.qchat.admin.model.qchat.QChatConstant;
+import com.qunar.qchat.admin.model.responce.BaseResponce;
 import com.qunar.qchat.admin.plugins.chatplugin.ChatPluginInstance;
 import com.qunar.qchat.admin.plugins.chatplugin.IChatPlugin;
+import com.qunar.qchat.admin.util.EjabdUtil;
+import com.qunar.qchat.admin.util.HttpClientUtils;
 import com.qunar.qtalk.ss.utils.JID;
 import com.qunar.qtalk.ss.utils.common.JsonUtil;
 import com.qunar.qtalk.ss.consult.entity.QtUnSentMessage;
@@ -39,15 +43,10 @@ public class ConsultUtils {
     public static boolean sendMessage(JID from, JID to, JID realfrom, JID realto, String message, boolean toSeat, boolean isRecv, boolean isAutoReply, boolean noUpdateMsgLog) {
         String messageParam = createConsultMessage(message, from.toBareJID(), realfrom.toBareJID(), to.toBareJID(), realto.toBareJID(),
                 toSeat ? QChatConstant.Note.QCHAT_ID_USER2SEAT : QChatConstant.Note.QCHAT_ID_SEAT2USER, "15", "", "", isRecv, isAutoReply, noUpdateMsgLog);
-//        return innerSendMessage(messageParam, from, to);
-        IChatPlugin plugin = ChatPluginInstance.getInstance().getChatPlugin(to.getDomain());
-
-        if (plugin == null)
-            return false;
 
         logger.info("send message: {} - {} - {}", from, to, messageParam);
 
-        return plugin.sendThirdMessage(from.toBareJID(), to.toBareJID(), messageParam);
+        return sendThirdMessage(from.toBareJID(), to.toBareJID(), messageParam);
     }
 
 
@@ -62,16 +61,37 @@ public class ConsultUtils {
 
             Shop shop = SpringComponents.components.shopService.selectShopById(shopKey);
             String welcome = shop.getWelcomes();
-            String supplierId = SpringComponents.components.hotlineSupplierService.selectHotlineBySupplierId(shopKey);
-            JID from = StringUtils.isNotEmpty(supplierId) ? JID.parseAsJID(supplierId) : shopId;
             if (StringUtils.isNotEmpty(welcome)) {
-                String messageContent = createWelcomeMessage(from, jid, qunarName, jid, welcome);
-
-                IChatPlugin plugin = ChatPluginInstance.getInstance().getChatPlugin(jid.getDomain());
-                plugin.sendThirdMessage(from.toFullJID(), jid.toBareJID(), messageContent);
-                logger.info("send selcome message: {} - {} - {}", from, jid, messageContent);
+//                String messageContent = createWelcomeMessage(qunarName, shopId, qunarName, jid, welcome);
+                ConsultUtils.sendMessage(qunarName, shopId, qunarName, jid, welcome, false, false, false, true);
+//                sendThirdMessage(qunarName.toBareJID(), jid.toBareJID(), messageContent);
+//                logger.info("send selcome message: {} - {} - {}", shopId, jid, messageContent);
             }
         }
+    }
+
+    public static boolean sendThirdMessage(String from, String to, String message) {
+        if (TextUtils.isEmpty(from) || TextUtils.isEmpty(to))
+            return false;
+        from = EjabdUtil.makeSureUserJid(from, QChatConstant.QCHAR_HOST);
+        to = EjabdUtil.makeSureUserJid(to, QChatConstant.QCHAR_HOST);
+
+
+        Map<String, String> param = Maps.newHashMap();
+        param.put(QChatConstant.Note.FROM, from);
+        param.put(QChatConstant.Note.TO, to);
+        param.put(QChatConstant.Note.MESSAGE, message);
+        param.put("system", "vs_qchat_admin");
+        String response = HttpClientUtils.newPostJson(Config.SEND_NOTE_URL, JacksonUtils.obj2String(param));
+
+        logger.info("sendThirdMessage result:{}", response);
+        if (!Strings.isNullOrEmpty(response)) {
+            BaseResponce qChatResult = JacksonUtils.string2Obj(response, BaseResponce.class);
+            if (qChatResult != null && qChatResult.isRet()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public static void resendUnsentMesasge(long shopId, JID jid) {
@@ -114,7 +134,7 @@ public class ConsultUtils {
 
         Map<String, String> channelIdValue = Maps.newHashMap();
         channelIdValue.put("cn", "consult");
-        channelIdValue.put("d", "recv");
+        channelIdValue.put("d", "send");
         channelIdValue.put("usrType", "usr");
 
         message.addAttribute(QChatConstant.Note.CHANNEL_ID, JacksonUtils.obj2String(channelIdValue));

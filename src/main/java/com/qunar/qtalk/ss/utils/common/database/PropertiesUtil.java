@@ -10,7 +10,7 @@ public abstract class PropertiesUtil {
 
     private static final Logger logger = LoggerFactory.getLogger(PropertiesUtil.class);
 
-    private static final String PGFILENAME = "pgsql.properties";
+    private static final String PGFILENAME = "jdbc.properties";
 
     private static Properties pgsqlProperties;
 

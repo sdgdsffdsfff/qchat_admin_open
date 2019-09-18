@@ -9,6 +9,7 @@ import com.qunar.qchat.admin.model.Supplier;
 import com.qunar.qchat.admin.model.qchat.QChatConstant;
 import com.qunar.qchat.admin.service.IRobotService;
 import com.qunar.qchat.admin.service.ISupplierService;
+import com.qunar.qchat.admin.service.impl.SupplierServiceImpl;
 import com.qunar.qchat.admin.vo.SupplierVO;
 import com.qunar.qtalk.ss.sift.enums.shop.AssignStragegy;
 import org.apache.commons.collections.CollectionUtils;
@@ -146,7 +147,7 @@ public class SupplierServiceUtil {
             return null;
         }
         List<Map<String, Object>> result = Lists.newArrayList();
-        ISupplierService supplierService = ApplicationContextHelper.popBean(ISupplierService.class);
+        SupplierServiceImpl supplierService = ApplicationContextHelper.popBean(SupplierServiceImpl.class);
         List<Supplier> suppliers = supplierService.getSupplierByIds(shopIds);
         if (CollectionUtils.isEmpty(suppliers)) {
             return result;

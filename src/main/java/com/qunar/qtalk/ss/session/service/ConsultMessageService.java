@@ -108,24 +108,24 @@ public class ConsultMessageService {
         String realFrom = SendMessage.appendQCDomain(getString(consultMessage.get("m_from")), realFromHost);
         String to = SendMessage.appendQCDomain(getString(consultMessage.get("m_to")), toHost);
 
-        Long shopid = shopService.selectShopByBsiId(to);
-        if (shopid == null) {
-            LOGGER.warn("makeNewConsultMsg shopId is null to:{}", to);
-            return;
-        }
-//        if (StringUtils.isNotEmpty(to)) {
-//
-//            if (to.startsWith("shop_"))
-//                to = to.replace("shop_", "");
-//
-//            if (!to.contains("@")) {
-//                to = String.format("%s@%s", to, toHost);
-//            }
+//        Long shopid = shopService.selectShopByBsiId(to);
+//        if (shopid == null) {
+//            LOGGER.warn("makeNewConsultMsg shopId is null to:{}", to);
+//            return;
 //        }
-//
-//        JID theTo = JID.parseAsJID(to);
-//
-//        int shopid = Integer.parseInt(theTo.getNode());
+        if (StringUtils.isNotEmpty(to)) {
+
+            if (to.startsWith("shop_"))
+                to = to.replace("shop_", "");
+
+            if (!to.contains("@")) {
+                to = String.format("%s@%s", to, toHost);
+            }
+        }
+
+        JID theTo = JID.parseAsJID(to);
+
+        int shopid = Integer.parseInt(theTo.getNode());
 
         JID fromJid = null;
         if (StringUtils.isNotEmpty(realFrom)) {

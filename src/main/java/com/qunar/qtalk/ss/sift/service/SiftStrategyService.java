@@ -31,6 +31,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -66,7 +67,7 @@ public class SiftStrategyService {
      *  true: 只要这个客服在线，就分配这个客服
      *  false: 这个客服在线且不忙的时候，分配这个客服）
      */
-    public DistributedInfo siftCsr(String productID, Long shopID, JID csrQunarName, String host, boolean isTranAs, boolean isSpillover) {
+    public DistributedInfo siftCsr(String productID, Long shopID, JID csrQunarName, String host, Long groupId, boolean isTranAs, boolean isSpillover) {
         LOGGER.info("请求siftCsr, 输入参数为：{}，{}，{}，{}，{}",
                 productID, shopID, JacksonUtil.obj2String(csrQunarName), isTranAs, isSpillover);
         DistributedInfo distributedInfo = new DistributedInfo();
@@ -96,7 +97,7 @@ public class SiftStrategyService {
             }
 
             // 筛选客服列表
-            List<CSR> csrList = findAvailableCSRs(productID, shop, host);
+            List<CSR> csrList = findAvailableCSRs(productID, shop, host, groupId);
 
             if (!isSpillover) {
                 // 判定是否开启排队，过滤掉忙的客服
@@ -147,7 +148,7 @@ public class SiftStrategyService {
             }
         }
         // 筛选客服列表
-        csrList = findAvailableCSRs(productID, shop, host);
+        csrList = findAvailableCSRs(productID, shop, host, null);
 
         if (!isSpillover) {
             // 判定是否开启排队，过滤掉忙的客服
@@ -158,10 +159,10 @@ public class SiftStrategyService {
     /***
      * 重载上一个函数
      */
-    public DistributedInfo siftCsr(String productID, Long shopID, JID csrQunarName, String host,  boolean isTranAs) {
+    public DistributedInfo siftCsr(String productID, Long shopID, JID csrQunarName, String host,Long groupId,  boolean isTranAs) {
         LOGGER.info("请求siftCsr, 输入参数为：{}，{}，{}，{}",
                 productID, shopID, JacksonUtil.obj2String(csrQunarName), isTranAs);
-        return siftCsr(productID, shopID, csrQunarName, host, isTranAs, false);
+        return siftCsr(productID, shopID, csrQunarName, host, groupId, isTranAs, false);
     }
 
     /***
@@ -214,9 +215,15 @@ public class SiftStrategyService {
      * @param shop
      * @return
      */
-    private List<CSR> findAvailableCSRs(String productID, Shop shop, String host) {
+    private List<CSR> findAvailableCSRs(String productID, Shop shop, String host, Long groupId) {
         List<CSR> csrList = null;
-        List<Long> groupIDs = groupService.querySeatGroupIdByShopIdAndProductId(shop.getId(), productID);
+        List<Long> groupIDs = new ArrayList<>();
+        if (groupId != null && groupId > 0) {
+            groupIDs.add(groupId);
+        } else {
+            groupIDs = groupService.querySeatGroupIdByShopIdAndProductId(shop.getId(), productID);
+        }
+
         if (CollectionUtils.isNotEmpty(groupIDs)) {
             // 产品分组逻辑
             csrList = csrService.queryCsrsByGroupIDs(groupIDs, host);

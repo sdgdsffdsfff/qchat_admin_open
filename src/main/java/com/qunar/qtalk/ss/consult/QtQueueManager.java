@@ -75,7 +75,7 @@ public class QtQueueManager {
                     logger.debug("close session removed, seatName={}\nlist is {}\n map is {}\nsessionKey is{}\n",
                             JacksonUtil.obj2String(seatName), JacksonUtil.obj2String(lists), JacksonUtil.obj2String(fromtoMapping), JacksonUtil.obj2String(sessionKey));
                 }
-                redistribution(sessionKey.getShopId(), sessionKey.getProductId(), null,seatName.getDomain(), false, false);
+                redistribution(sessionKey.getShopId(), sessionKey.getProductId(), null, seatName.getDomain(), null, false, false);
             }
         } catch (Exception e) {
             logger.error("closeSession failed, {} {} {}", jid, seatName, shopId, e);
@@ -107,7 +107,7 @@ public class QtQueueManager {
 
     public void goOnline(long shopId) {
         // redistribution(shopId, "*", null);
-        redistribution(shopId, "*", null, QChatConstant.DEFAULT_HOST,  true, false);
+        redistribution(shopId, "*", null, QChatConstant.DEFAULT_HOST, null, true, false);
     }
 
     private static class Holder {
@@ -126,14 +126,13 @@ public class QtQueueManager {
 //    private QtSessionItem customerRedistribution(QtSessionKey key) {
 //        return customerRedistribution(key, true);
 //    }
-
-    private QtSessionItem customerRedistribution(QtSessionKey key, String host, boolean isTranAs) {
+    private QtSessionItem customerRedistribution(QtSessionKey key, String host, Long groupId, boolean isTranAs) {
         if (key == null)
             return null;
         long shopId = key.getShopId();
         String productId = key.getProductId();
         JID userName = key.getUserName();
-        return redistribution(shopId, productId, userName, host, true, isTranAs);
+        return redistribution(shopId, productId, userName, host, groupId,true, isTranAs);
     }
 
     /***
@@ -177,7 +176,7 @@ public class QtQueueManager {
      * @param sendQueueInfo 是否发送排队信息，如果本次调用是客人说话引起的，那么会给客人提示当前队列信息，否则不提示
      * @return
      */
-    private QtSessionItem redistribution(long shopId, String productId, JID userName,String host, boolean sendQueueInfo, boolean isTranAs) {
+    private QtSessionItem redistribution(long shopId, String productId, JID userName, String host, Long groupId, boolean sendQueueInfo, boolean isTranAs) {
 
         logger.info("redistribution : shop:{}\n pid:{}\n username:{}\nququeMapping:{}\n", shopId, productId, userName, JacksonUtil.obj2String(queueMapping));
 
@@ -250,7 +249,7 @@ public class QtQueueManager {
                             oldSeat = oldsession.getSeatQunarName();
                     }
                     DistributedInfo distributedInfo =
-                            SpringComponents.components.siftStrategyService.siftCsr(queueKey.getProductId(), Long.valueOf(queueKey.getShopId()), oldSeat, host, isTranAs);
+                            SpringComponents.components.siftStrategyService.siftCsr(queueKey.getProductId(), queueKey.getShopId(), oldSeat, host, groupId, isTranAs);
 
                     serviceStatus = distributedInfo == null ? -1 : distributedInfo.getQueueStatus();
 
@@ -425,7 +424,7 @@ public class QtQueueManager {
      * @param isEx 是否强制重新分配
      * @return
      */
-    public QtSessionItem judgmentOrRedistribution(JID userName, long shopId, String productId,String host, boolean isEx, boolean isTranAs) {
+    public QtSessionItem judgmentOrRedistribution(JID userName, long shopId, String productId, String host, Long groupId, boolean isEx, boolean isTranAs) {
 
         QtSessionKey key = new QtSessionKey(userName, shopId, productId);
 
@@ -433,7 +432,7 @@ public class QtQueueManager {
 
         if (result == null || !result.isValid() || isEx || invalidCsr(shopId, host, result.getSeatQunarName())) {
             CacheHelper.remove(CacheHelper.CacheType.SeatCache, key.getRedisKey());
-            result = customerRedistribution(key, host, isTranAs);
+            result = customerRedistribution(key, host, groupId, isTranAs);
         }
         return result;
     }
@@ -476,7 +475,7 @@ public class QtQueueManager {
 //            }
 //        }
 
-        QtSessionItem queueItem = judgmentOrRedistribution(from, shopId, productId, host, false, false);
+        QtSessionItem queueItem = judgmentOrRedistribution(from, shopId, productId, host, null, false, false);
         if (queueItem != null) {
             result = queueItem.getSeatQunarName();
             if (!noUpdate)
@@ -625,7 +624,7 @@ public class QtQueueManager {
                         sessionList.add(item.getSessionId());
 
                     }
-                    redistribution(item.getShopId(), item.getProductId(), null, seatName.getDomain(), false, false);
+                    redistribution(item.getShopId(), item.getProductId(), null, seatName.getDomain(), null, false, false);
 
                 } catch (Exception e) {
                     logger.error("ON EVENT: SessionTimeoutAction failed.", e);

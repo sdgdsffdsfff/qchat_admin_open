@@ -2,6 +2,7 @@ package com.qunar.qtalk.ss.sift.service;
 
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.qunar.qchat.admin.model.SupplierSeatGroup;
 import com.qunar.qchat.admin.util.IDEncryptor;
 import com.qunar.qchat.admin.util.JacksonUtil;
 import com.qunar.qchat.admin.vo.conf.JsonData;
@@ -105,6 +106,12 @@ public class ShopService {
         List<Long> longList = shopDao.selectOtherShopIdsByIdAndQunarName(supplierId);
         LOGGER.debug("selectOtherSupplier param:{} result:{}", supplierId, JacksonUtil.obj2String(longList));
         return CollectionUtils.isNotEmpty(longList) ? longList : new ArrayList<>();
+    }
+    public List<SupplierSeatGroup> selectSupplierGroup() {
+
+        List<SupplierSeatGroup> seatGroups = shopDao.selectSupplierGroup();
+        LOGGER.debug("selectSupplierGroup result:{}", JacksonUtil.obj2String(seatGroups));
+        return CollectionUtils.isNotEmpty(seatGroups) ? seatGroups : new ArrayList<>();
     }
 
     public boolean saveShop(Shop shop) {

@@ -62,9 +62,9 @@ public class GroupConnection {
             if (connection == null) {
                 String configNode = String.format("%s.%s", domain, (type == DBConnectionType.MessageConnection ? "message" : "group"));
 
-                String connectionUrl = PropertiesUtil.getDBConfig().getProperty(String.format("%s.dburl", configNode));
-                String userName = PropertiesUtil.getDBConfig().getProperty(String.format("%s.dbuser", configNode));
-                String userPass = PropertiesUtil.getDBConfig().getProperty(String.format("%s.dbpassword", configNode));
+                String connectionUrl = PropertiesUtil.getDBConfig().getProperty(String.format("%s.url", configNode));
+                String userName = PropertiesUtil.getDBConfig().getProperty(String.format("%s.user", configNode));
+                String userPass = PropertiesUtil.getDBConfig().getProperty(String.format("%s.password", configNode));
                 newConnection = DatabaseHelper.MakeConnection(connectionUrl, userName, userPass);
 
 

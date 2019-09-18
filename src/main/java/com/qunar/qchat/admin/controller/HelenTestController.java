@@ -7,6 +7,7 @@ import com.qunar.qtalk.ss.sift.entity.CSR;
 import com.qunar.qtalk.ss.sift.entity.HotlineSupplierMapping;
 import com.qunar.qtalk.ss.sift.model.DistributedInfo;
 import com.qunar.qtalk.ss.sift.service.HotlineSupplierService;
+import com.qunar.qtalk.ss.sift.service.ShopService;
 import com.qunar.qtalk.ss.sift.service.SiftStrategyService;
 import com.qunar.qtalk.ss.utils.JID;
 import org.apache.commons.lang3.StringUtils;
@@ -46,7 +47,7 @@ public class HelenTestController {
         }
 
         DistributedInfo distributedInfo =
-                siftStrategyService.siftCsr(productID, new Long(shopID), fromJid,Config.QCHAT_DEFAULT_HOST, new Boolean(isTranAs));
+                siftStrategyService.siftCsr(productID, new Long(shopID), fromJid,Config.QCHAT_DEFAULT_HOST, null, new Boolean(isTranAs));
 
         CSR csr = distributedInfo == null ? null : distributedInfo.getCsr();
         return csr;

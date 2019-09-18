@@ -1,17 +1,22 @@
 package com.qunar.qchat.admin.controller.api;
 
 import com.google.common.base.Strings;
+import com.qunar.qchat.admin.model.SupplierSeatGroup;
 import com.qunar.qchat.admin.service.supplier.SupplierNewService;
 import com.qunar.qchat.admin.util.AuthorityUtil;
 import com.qunar.qchat.admin.vo.conf.JsonData;
+import com.qunar.qtalk.ss.sift.service.ShopService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 /**
  * Created by yinmengwang on 17-5-27.
@@ -23,6 +28,9 @@ public class SupplierSuggestController {
 
     @Resource
     private SupplierNewService supplierNewService;
+
+    @Autowired
+    ShopService shopService;
 
     @RequestMapping(value = "/name/suggest.json")
     @ResponseBody
@@ -58,5 +66,12 @@ public class SupplierSuggestController {
             log.error("查询{}可转移的{}店铺的客服信息出错", qunarName, supplierId, e);
         }
         return JsonData.error("系统错误");
+    }
+
+    @RequestMapping(value = "/supplierConfig.json", method = RequestMethod.GET)
+    @ResponseBody
+    public JsonData supplierConfig() {
+        List<SupplierSeatGroup> supplierSeatGroups = shopService.selectSupplierGroup();
+        return JsonData.success(supplierSeatGroups);
     }
 }

@@ -63,6 +63,12 @@ public class CSR {
 
     public void setQunarName(String qunarName) {
         this.qunarName = qunarName;
+        if (StringUtils.isNotEmpty(qunarName)) {
+            if (!qunarName.contains("@")) {
+                qunarName = String.format("%s@%s", qunarName, QChatConstant.DEFAULT_HOST);
+            }
+            realQunarName = JID.parseAsJID(qunarName);
+        }
     }
 
     public String getWebName() {
@@ -175,13 +181,6 @@ public class CSR {
 
     public void setHost(String host) {
         this.host = host;
-        host = StringUtils.isNotEmpty(host) ? host :  QChatConstant.DEFAULT_HOST;
-        if (StringUtils.isNotEmpty(qunarName)) {
-            if (!qunarName.contains("@")) {
-                qunarName = String.format("%s@%s", qunarName, host);
-            }
-            realQunarName = JID.parseAsJID(qunarName);
-        }
     }
 
     public int getBindWx() {
