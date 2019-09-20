@@ -100,6 +100,6 @@
 
     <select id="selectSupplierGroup" resultMap="supplierGroup">
         SELECT supplier.id as supplierId, supplier.name as supplierName, seat_group.id as groupId, seat_group.name as groupName
-        from supplier ,seat_group where supplier.id= seat_group.supplier_id and supplier.status=1;
+        from supplier ,seat_group where supplier.id= seat_group.supplier_id and supplier.status=1 order by supplier.id, seat_group.id;
     </select>
 </mapper>
