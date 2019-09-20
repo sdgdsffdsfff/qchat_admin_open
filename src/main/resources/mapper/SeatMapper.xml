@@ -229,7 +229,7 @@
         where su.name = #{supplierName} and su.id = se.supplier_id and se.status = 1
     </select>
     
-    <select id="getSeatListByQunarNames" parameterType="list" resultType="com.qunar.qchat.admin.model.Seat">
+    <select id="getSeatListByQunarNames" parameterType="map" resultType="com.qunar.qchat.admin.model.Seat">
         SELECT <include refid="seat"/>
         , supplier.name AS supplierName
         FROM seat,supplier
@@ -240,8 +240,8 @@
             <foreach collection="list" open="(" close=")" separator="," item="qunarName">
                 #{qunarName}
             </foreach>
-            AND seat.supplier_id = supplier.id
         </if>
+        AND seat.supplier_id = supplier.id and supplier.id=#{supplierId}
     </select>
 
     <select id="getSeatListByPid" parameterType="list" resultType="com.qunar.qchat.admin.model.Seat">

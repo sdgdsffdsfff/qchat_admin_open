@@ -30,6 +30,8 @@ import com.qunar.qchat.admin.service.sortstrategy.PollingASeatStrategy;
 import com.qunar.qchat.admin.util.*;
 import com.qunar.qchat.admin.vo.*;
 import com.qunar.qchat.admin.vo.conf.JsonData;
+import com.qunar.qtalk.ss.sift.dao.HostUserDao;
+import com.qunar.qtalk.ss.sift.entity.HostUsers;
 import com.qunar.qtalk.ss.utils.common.CacheHelper;
 import com.qunar.qtalk.ss.utils.JID;
 import com.qunar.qtalk.ss.consult.ConsultUtils;
@@ -110,6 +112,8 @@ public class SeatServiceImpl implements ISeatService {
     ShopService shopService;
     @Autowired
     QueueMappingDao queueMappingDao;
+    @Resource
+    HostUserDao hostUserDao;
 
 
 
@@ -1057,12 +1061,12 @@ public class SeatServiceImpl implements ISeatService {
     }
 
     @Override
-    public List<Seat> getSeatListByQunarNames(List<String> qunarName) {
+    public List<Seat> getSeatListByQunarNames(List<String> qunarName, List<Long> shopIdsStr) {
         if (CollectionUtil.isNotEmpty(qunarName)) {
-//            for (String name : qunarName) {
-//                name.toLowerCase();
-//            }
-            return seatDao.getSeatListByQunarNames(qunarName);
+            if (CollectionUtils.isNotEmpty(shopIdsStr) && (shopIdsStr.size() == 1)) {
+                return seatDao.getSeatListByQunarNames(qunarName, shopIdsStr.get(0));
+            }
+            return seatDao.getSeatListByQunarNames(qunarName, null);
         }
         return null;
     }
@@ -1081,8 +1085,9 @@ public class SeatServiceImpl implements ISeatService {
         List<Map<String, Object>> robots = Lists.newArrayList();
 
         List<String> shopIdsStr = Lists.newArrayList(Collections2.filter(qunarNames, isShop));
+        List<Long> shopIds = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(shopIdsStr)) {
-            List<Long> shopIds = Lists.transform(shopIdsStr, getShopId);
+            shopIds = Lists.transform(shopIdsStr, getShopId);
             shops = SupplierServiceUtil.buildSupplierInfo(shopIds);
             if (!CollectionUtil.isEmpty(shops))
                 userInfoList.addAll(shops);
@@ -1101,8 +1106,8 @@ public class SeatServiceImpl implements ISeatService {
                 userInfoList.addAll(robots);
         }
 
-        Map<String, ?> UserInfoMap = getUserInfoByQunarNames(qunarNames, fields);
-        if (CollectionUtil.isEmpty(UserInfoMap)) {
+        List<Map<String, Object>> userInfos = getUserInfoByQunarNames(qunarNames, fields);
+        if (CollectionUtil.isEmpty(userInfos)) {
             if (CollectionUtil.isEmpty(userInfoList)) {
                 return null;
             } else {
@@ -1112,8 +1117,8 @@ public class SeatServiceImpl implements ISeatService {
 
 
         try {
-            @SuppressWarnings("unchecked") List<Map<String, Object>> userInfos
-                    = (List<Map<String, Object>>) UserInfoMap.get("data");
+//            @SuppressWarnings("unchecked") List<Map<String, Object>> userInfos
+//                    = (List<Map<String, Object>>) UserInfoMap.get("data");
             if (!CollectionUtil.isEmpty(userInfos)) {
 
                 for (Map<String, Object> userinfo : userInfos) {
@@ -1140,7 +1145,7 @@ public class SeatServiceImpl implements ISeatService {
                 return null;
             }
 
-            Map<String, Seat> seatIndexMap = getSeatIndex(getSeatListByQunarNames(qunarNames));
+            Map<String, Seat> seatIndexMap = getSeatIndex(getSeatListByQunarNames(qunarNames, shopIds));
             if (CollectionUtil.isEmpty(seatIndexMap)) {
                 if (!CollectionUtil.isEmpty(userInfoList)) {
                     return JacksonUtil.string2Map(JacksonUtil.obj2String(JsonData.success(userInfoList)));
@@ -1168,115 +1173,108 @@ public class SeatServiceImpl implements ISeatService {
     @Override
     public Map<String, ?> getNewUserAndSeatInfo(List<String> qunarNames, String fields) {
         try {
-        // 过滤店铺id
-        List<Map<String, Object>> userInfoList = Lists.newArrayList();
+            // 过滤店铺id
+            List<Map<String, Object>> userInfoList = Lists.newArrayList();
 
-        List<Map<String, Object>> shops = Lists.newArrayList();
-        List<Map<String, Object>> robots = Lists.newArrayList();
-        List<Map<String, Object>> bnbs = Lists.newArrayList();
+            List<Map<String, Object>> shops = Lists.newArrayList();
+            List<Map<String, Object>> robots = Lists.newArrayList();
+            List<Map<String, Object>> bnbs = Lists.newArrayList();
 
-        List<String> shopIdsStr = Lists.newArrayList(Collections2.filter(qunarNames, isShop));
-        if (CollectionUtils.isNotEmpty(shopIdsStr)) {
-            List<Long> shopIds = Lists.transform(shopIdsStr, getShopId);
-            shops = SupplierServiceUtil.buildSupplierInfo(shopIds);
-            if (!CollectionUtil.isEmpty(shops))
-                userInfoList.addAll(shops);
-        }
-        //过滤途家bnb_信息
-        List<String> bnbids = Lists.newArrayList(Collections2.filter(qunarNames, new Predicate<String>() {
-            @Override
-            public boolean apply(String s) {
-                return s.startsWith("demo_");
+            List<String> shopIdsStr = Lists.newArrayList(Collections2.filter(qunarNames, isShop));
+            List<Long> shopIds = new ArrayList<>();
+            if (CollectionUtils.isNotEmpty(shopIdsStr)) {
+                shopIds = Lists.transform(shopIdsStr, getShopId);
+                shops = SupplierServiceUtil.buildSupplierInfo(shopIds);
+                if (!CollectionUtil.isEmpty(shops))
+                    userInfoList.addAll(shops);
             }
-        }));
-        if(!CollectionUtil.isEmpty(bnbids)) {
-            bnbs = getBnbUserInfoByQunarNames(bnbids);
-            if(!CollectionUtil.isEmpty(bnbs)) {
-                userInfoList.addAll(bnbs);
+            //过滤途家bnb_信息
+            List<String> bnbids = Lists.newArrayList(Collections2.filter(qunarNames, new Predicate<String>() {
+                @Override
+                public boolean apply(String s) {
+                    return s.startsWith("demo_");
+                }
+            }));
+            if (!CollectionUtil.isEmpty(bnbids)) {
+                bnbs = getBnbUserInfoByQunarNames(bnbids);
+                if (!CollectionUtil.isEmpty(bnbs)) {
+                    userInfoList.addAll(bnbs);
+                }
+            }
+
+
+            // 过滤店铺机器人信息
+            List<String> robotids = Lists.newArrayList(Collections2.filter(qunarNames, new Predicate<String>() {
+                @Override
+                public boolean apply(String s) {
+                    return s.endsWith("_robot") || s.startsWith("third_");
+                }
+            }));
+            if (!CollectionUtil.isEmpty(robotids)) {
+                robots = SupplierServiceUtil.buildRobotInfoWithConfig(robotids);
+                if (!CollectionUtil.isEmpty(robots))
+                    userInfoList.addAll(robots);
+            }
+
+            List<Map<String, Object>> userInfos = getUserInfoByQunarNames(qunarNames, fields);
+        if (CollectionUtil.isEmpty(userInfos)) {
+            if (CollectionUtil.isEmpty(userInfoList)) {
+                return null;
+            } else {
+                return parseData(qunarNames, userInfoList);//JacksonUtil.string2Map(JacksonUtil.obj2String(JsonData.success(userInfoList)));
             }
         }
 
 
-        // 过滤店铺机器人信息
-        List<String> robotids = Lists.newArrayList(Collections2.filter(qunarNames, new Predicate<String>() {
-            @Override
-            public boolean apply(String s) {
-                return s.endsWith("_robot") || s.startsWith("third_");
-            }
-        }));
-        if (!CollectionUtil.isEmpty(robotids)) {
-            robots = SupplierServiceUtil.buildRobotInfoWithConfig(robotids);
-            if (!CollectionUtil.isEmpty(robots))
-                userInfoList.addAll(robots);
-        }
 
-//        Map<String, ?> UserInfoMap = getUserInfoByQunarNames(qunarNames, fields);
-//        if (CollectionUtil.isEmpty(UserInfoMap)) {
-//            if (CollectionUtil.isEmpty(userInfoList)) {
-//                return null;
-//            } else {
-//                return parseData(qunarNames, userInfoList);//JacksonUtil.string2Map(JacksonUtil.obj2String(JsonData.success(userInfoList)));
-//            }
-//        }
-//
-//
-//        try {
 //            @SuppressWarnings("unchecked") List<Map<String, Object>> userInfos
 //                    = (List<Map<String, Object>>) UserInfoMap.get("data");
-//            if (!CollectionUtil.isEmpty(userInfos)) {
-//
-//                for (Map<String, Object> userinfo : userInfos) {
-//                    if(userinfo != null) {
-//                        if (userinfo.containsKey("nickname") && userinfo.containsKey("username")) {
-//                            String nickname = userinfo.get("nickname") == null ? "" : userinfo.get("nickname").toString();
-//                            String username = userinfo.get("username") == null ? "" : userinfo.get("username").toString();
-//                            // 识别 nickname 为  a***z 这种类型的显示，用username代替
-//                            if (!Strings.isNullOrEmpty(username)) {
-//                                username = username.charAt(0) + "***" + username.charAt(username.length() - 1);
-//                                if (username.equalsIgnoreCase(nickname)) {
-//                                    userinfo.put("nickname", userinfo.get("username"));
-//                                }
-//                            }
-//                        }
-//                    }
-//                }
-//
-//                userInfoList.addAll(userInfos);
-//            }
-//
-//
-//            CollectionUtil.filterNull(userInfoList);
-//
-//            if (CollectionUtil.isEmpty(userInfoList)) {
-//                return null;
-//            }
+            if (!CollectionUtil.isEmpty(userInfos)) {
 
-            Map<String, Seat> seatIndexMap = getSeatIndex(getSeatListByQunarNames(qunarNames));
+                for (Map<String, Object> userinfo : userInfos) {
+                    if(userinfo != null) {
+                        if (userinfo.containsKey("nickname") && userinfo.containsKey("username")) {
+                            String nickname = userinfo.get("nickname") == null ? "" : userinfo.get("nickname").toString();
+                            String username = userinfo.get("username") == null ? "" : userinfo.get("username").toString();
+                            // 识别 nickname 为  a***z 这种类型的显示，用username代替
+                            if (!Strings.isNullOrEmpty(username)) {
+                                username = username.charAt(0) + "***" + username.charAt(username.length() - 1);
+                                if (username.equalsIgnoreCase(nickname)) {
+                                    userinfo.put("nickname", userinfo.get("username"));
+                                }
+                            }
+                        }
+                    }
+                }
+
+                userInfoList.addAll(userInfos);
+            }
+
+
+            CollectionUtil.filterNull(userInfoList);
+
+            if (CollectionUtil.isEmpty(userInfoList)) {
+                return null;
+            }
+
+            Map<String, Seat> seatIndexMap = getSeatIndex(getSeatListByQunarNames(qunarNames, shopIds));
             if (CollectionUtil.isEmpty(seatIndexMap)) {
                 if (!CollectionUtil.isEmpty(userInfoList)) {
                     return parseData(qunarNames, userInfoList);//JacksonUtil.string2Map(JacksonUtil.obj2String(JsonData.success(userInfoList)));
                 }
                 return null;
-            } else {
-                for (Map.Entry<String, Seat> entrySet: seatIndexMap.entrySet()) {
-                    Map<String, Object> map = new HashMap<>();
-                    map.put("username", entrySet.getKey());
-                    map.put("webname", entrySet.getValue().getWebName());
-                    map.put("suppliername", entrySet.getValue().getSupplierName());
-                    userInfoList.add(map);
-                }
-
             }
-//            for (Map<String, Object> map : userInfoList) {
-//                String username = (String) map.get("username");
-//                Seat seat = seatIndexMap.get(username);
-//                if (seat != null) {
-//                    map.put("webname", seat.getWebName());
-//                    map.put("suppliername", seat.getSupplierName());
-//                }
-//                if (null != map.get("username") && !Strings.isNullOrEmpty(map.get("username").toString()))
-//                    map.put("username", map.get("username").toString().toLowerCase());
-//            }
+            for (Map<String, Object> map : userInfoList) {
+                String username = (String) map.get("username");
+                Seat seat = seatIndexMap.get(username);
+                if (seat != null) {
+                    map.put("webname", seat.getWebName());
+                    map.put("suppliername", seat.getSupplierName());
+                    map.put("faceLink", seat.getFaceLink());
+                }
+                if (null != map.get("username") && !Strings.isNullOrEmpty(map.get("username").toString()))
+                    map.put("username", map.get("username").toString().toLowerCase());
+            }
             return parseData(qunarNames, userInfoList);//JacksonUtil.string2Map(JacksonUtil.obj2String(JsonData.success(userInfoList)));
         } catch (Exception e) {
             logger.info("get user info error", e);
@@ -1380,7 +1378,7 @@ public class SeatServiceImpl implements ISeatService {
                         } else {
                             data.put("type", 0);
                         }
-                        data.put("imageurl", "https://xxx");
+                        data.put("imageurl", userinfo.get("faceLink"));
                         data.put("email", userinfo.get("email"));
                         data.put("gender", userinfo.get("gender"));
                         data.put("loginName", userinfo.get("loginName"));
@@ -1413,19 +1411,33 @@ public class SeatServiceImpl implements ISeatService {
 
 
     @Override
-    public Map<String, ?> getUserInfoByQunarNames(List<String> qunarNames, String fields) {
+    public List<Map<String, Object>> getUserInfoByQunarNames(List<String> qunarNames, String fields) {
         if (CollectionUtil.isEmpty(qunarNames)) {
             return null;
         }
-        Map<String, String> formParams = new HashMap<>();
-        formParams.put("username", Joiner.on(',').skipNulls().join(qunarNames));
-        formParams.put("outEncrypt", "true");
-        if (StringUtils.isNotBlank(fields)) {
-            formParams.put("fields", fields);
+//        Map<String, String> formParams = new HashMap<>();
+//        formParams.put("username", Joiner.on(',').skipNulls().join(qunarNames));
+//        formParams.put("outEncrypt", "true");
+//        if (StringUtils.isNotBlank(fields)) {
+//            formParams.put("fields", fields);
+//        }
+//        String jsonRes = HttpClientUtils.post(Config.USER_CENTER_INFO_URL, formParams);
+        List<HostUsers> hostUsers = hostUserDao.selectUsersByUserIds(qunarNames);
+        if (CollectionUtils.isEmpty(hostUsers)) {
+            return null;
         }
-        String jsonRes = HttpClientUtils.post(Config.USER_CENTER_INFO_URL, formParams);
-        return JacksonUtil.string2Map(jsonRes);
+        List<Map<String, Object>> jsonRes = new ArrayList<>();
+        hostUsers.stream().forEach(hostUser -> {
+            Map<String, Object> userMap = new HashMap<>();
+            userMap.put("username", hostUser.getUserId());
+            userMap.put("nickname", hostUser.getUserName());
+            userMap.put("webname", hostUser.getUserName());
+            jsonRes.add(userMap);
+        });
+
+        return jsonRes;
     }
+
 
     @Override
     public List<Map<String,Object>> getBnbUserInfoByQunarNames(List<String> qunarNames) {
@@ -1896,7 +1908,7 @@ public class SeatServiceImpl implements ISeatService {
         Map<String, ServiceStatusEnum> userServiceStatus = Maps.newHashMap();
 
         // 查找这几个人的最后一次修改信息
-        List<Seat> seats = getSeatListByQunarNames(qunarNameList);
+        List<Seat> seats = getSeatListByQunarNames(qunarNameList, null);
 
 
         for (Seat seat : seats) {

@@ -62,10 +62,10 @@ public class ConsultUtils {
             Shop shop = SpringComponents.components.shopService.selectShopById(shopKey);
             String welcome = shop.getWelcomes();
             if (StringUtils.isNotEmpty(welcome)) {
-//                String messageContent = createWelcomeMessage(qunarName, shopId, qunarName, jid, welcome);
-                ConsultUtils.sendMessage(qunarName, shopId, qunarName, jid, welcome, false, false, false, true);
-//                sendThirdMessage(qunarName.toBareJID(), jid.toBareJID(), messageContent);
-//                logger.info("send selcome message: {} - {} - {}", shopId, jid, messageContent);
+                String messageContent = createWelcomeMessage(shopId, jid, qunarName, jid, welcome);
+//                ConsultUtils.sendMessage(qunarName, shopId, qunarName, jid, welcome, false, false, false, true);
+                sendThirdMessage(shopId.toBareJID(), jid.toBareJID(), messageContent);
+                logger.info("send selcome message: {} - {} - {}", shopId, jid, messageContent);
             }
         }
     }
@@ -134,7 +134,7 @@ public class ConsultUtils {
 
         Map<String, String> channelIdValue = Maps.newHashMap();
         channelIdValue.put("cn", "consult");
-        channelIdValue.put("d", "send");
+        channelIdValue.put("d", "recv");
         channelIdValue.put("usrType", "usr");
 
         message.addAttribute(QChatConstant.Note.CHANNEL_ID, JacksonUtils.obj2String(channelIdValue));

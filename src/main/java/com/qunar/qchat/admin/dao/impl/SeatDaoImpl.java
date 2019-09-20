@@ -150,8 +150,11 @@ public class SeatDaoImpl extends BaseSqlSessionDao implements ISeatDao {
     }
 
     @Override
-    public List<Seat> getSeatListByQunarNames(List<String> qunarNames) {
-        return getReadSqlSession().selectList("SeatMapping.getSeatListByQunarNames", qunarNames);
+    public List<Seat> getSeatListByQunarNames(List<String> qunarNames, Long supplierId) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("list", qunarNames);
+        map.put("supplierId", supplierId);
+        return getReadSqlSession().selectList("SeatMapping.getSeatListByQunarNames", map);
     }
 
     @Override

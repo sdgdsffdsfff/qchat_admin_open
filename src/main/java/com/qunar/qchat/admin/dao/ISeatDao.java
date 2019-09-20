@@ -37,7 +37,7 @@ public interface ISeatDao {
 
     List<Seat> getSeatListBySupplierName(String supplierName);
 
-    List<Seat> getSeatListByQunarNames(List<String> qunarNames);
+    List<Seat> getSeatListByQunarNames(List<String> qunarNames, Long supplierId);
 
     List<Seat> getSeatListByPid(List<String> pidList);
 

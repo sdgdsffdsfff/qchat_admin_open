@@ -166,7 +166,7 @@ public interface ISeatService {
      * @param qunarNames QunarName的列表
      * @return Seat信息列表
      */
-    List<Seat> getSeatListByQunarNames(List<String> qunarNames);
+    List<Seat> getSeatListByQunarNames(List<String> qunarNames, List<Long> shopIdsStr);
 
     /**
      * 获取客服名称列表
@@ -180,7 +180,7 @@ public interface ISeatService {
     Map<String, ?> getUserAndSeatInfo(List<String> qunarNames, String fields);
     Map<String, ?> getNewUserAndSeatInfo(List<String> qunarNames, String fields);
 
-    Map<String, ?> getUserInfoByQunarNames(List<String> qunarNames, String fields);
+    List<Map<String, Object>> getUserInfoByQunarNames(List<String> qunarNames, String fields);
 
     /**
      * 获取途家用户信息
