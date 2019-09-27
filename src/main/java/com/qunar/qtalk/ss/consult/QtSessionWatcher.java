@@ -66,8 +66,8 @@ public class QtSessionWatcher {
 
     public void setupTimer() {
 
-        if (!CheckJobUtil.checkRun())
-            return;
+//        if (!CheckJobUtil.checkRun())
+//            return;
 
 //        if (clearSessionTimer != null)
 //            clearSessionTimer.cancel();
@@ -133,7 +133,7 @@ public class QtSessionWatcher {
                             logger.debug("catch a 4 min message: {} - {} - {}", subvalue, Config.Consult_CustomerNotifyTime, item.getStatus());
                             String supplierId = SpringComponents.components.hotlineSupplierService.selectHotlineBySupplierId(item.getShopJid());
                             JID from = StringUtils.isNotEmpty(supplierId) ? JID.parseAsJID(supplierId) : item.getShopJid();
-                            ConsultUtils.sendMessage(from, item.getUserName(), item.getSeatQunarName(), item.getUserName(), "小驼先去服务其他人喽，您有任何疑问，可以随时咨询，小驼会第一时间处理", false, false, true);
+                            ConsultUtils.sendMessage(from, item.getUserName(), item.getSeatQunarName(), item.getUserName(), "先去服务其他人喽，您有任何疑问，可以随时咨询，会第一时间处理", false, false, true);
                         }
                     }
                 } catch (Exception e) {
