@@ -12,7 +12,7 @@ import com.qunar.qchat.admin.model.SupplierInfo;
 import com.qunar.qchat.admin.model.SysUserUpdateRequest;
 import com.qunar.qchat.admin.service.ISeatService;
 import com.qunar.qchat.admin.service.ISupplierService;
-import com.qunar.qchat.admin.service.supplier.SupplierNewService;
+import com.qunar.qchat.admin.service.ISupplierNewService;
 import com.qunar.qchat.admin.util.CollectionUtil;
 import com.qunar.qchat.admin.util.JacksonUtil;
 import com.qunar.qchat.admin.util.JsonResultUtil;
@@ -29,7 +29,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,8 +45,8 @@ public class SupplierInnerAPIController {
     private ISupplierService supplierService;
     @Autowired
     private ISeatService seatService;
-    @Resource
-    private SupplierNewService supplierNewService;
+    @Autowired
+    private ISupplierNewService supplierNewService;
     @Autowired
     ShopService shopService;
 
@@ -68,7 +67,7 @@ public class SupplierInnerAPIController {
 
     @ResponseBody
     @RequestMapping(value = "/saveSupplier.qunar")
-    public JsonResultVO<?> saveSupplier(@RequestParam(value = "p", required = true, defaultValue = "") String p) {
+    public JsonResultVO<?> saveSupplier(@RequestBody String p) {
         logger.info("saveSupplier -- 请求参数 p: {}", p);
         SupplierVO s = JacksonUtil.string2Obj(p, SupplierVO.class);
         if (null == s) {

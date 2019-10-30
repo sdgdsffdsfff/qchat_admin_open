@@ -2,7 +2,7 @@ package com.qunar.qchat.admin.controller.api;
 
 import com.google.common.base.Strings;
 import com.qunar.qchat.admin.model.SupplierSeatGroup;
-import com.qunar.qchat.admin.service.supplier.SupplierNewService;
+import com.qunar.qchat.admin.service.ISupplierNewService;
 import com.qunar.qchat.admin.util.AuthorityUtil;
 import com.qunar.qchat.admin.vo.conf.JsonData;
 import com.qunar.qtalk.ss.sift.service.ShopService;
@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
@@ -26,8 +25,8 @@ import java.util.List;
 @RequestMapping(value = "/api/supplier")
 public class SupplierSuggestController {
 
-    @Resource
-    private SupplierNewService supplierNewService;
+    @Autowired
+    private ISupplierNewService supplierNewService;
 
     @Autowired
     ShopService shopService;

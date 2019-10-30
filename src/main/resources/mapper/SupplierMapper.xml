@@ -84,6 +84,11 @@
         WHERE bsm.busi_supplier_id = #{busiSupplierId} and bsm.busi_id = #{busiType} and s.id = bsm.supplier_id and bsm.status = 1 and s.status = 1
     </select>
 
+    <select id="getSupplierBySupplierName" parameterType="map" resultType="com.qunar.qchat.admin.model.Supplier">
+        SELECT s.id,s.name, s.create_time as createDate, bsm.busi_id as bType, s.ext_flag as bQueue, s.status FROM busi_supplier_mapping bsm,supplier s
+        WHERE s.name=#{supplierName} and s.id = bsm.supplier_id and bsm.status = 1 and s.status = 1 order by id desc limit 1
+    </select>
+
     <select id="getSupplierByBusiSupplierIdEx" parameterType="map" resultType="com.qunar.qchat.admin.model.Supplier">
         SELECT s.id,s.name,s.ext_flag as bQueue,s.logo_url as logoUrl,s.welcomes ,s.status, s.create_time as createDate FROM busi_supplier_mapping bsm,supplier s
         WHERE bsm.supplier_id = #{busiSupplierId} and bsm.busi_id = #{busiType} and s.id = bsm.supplier_id

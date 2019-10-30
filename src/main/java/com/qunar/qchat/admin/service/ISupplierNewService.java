@@ -1,4 +1,4 @@
-package com.qunar.qchat.admin.service.supplier;
+package com.qunar.qchat.admin.service;
 
 import com.qunar.qchat.admin.model.BusinessEnum;
 import com.qunar.qchat.admin.model.Seat;
@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * Created by yinmengwang on 17-5-26.
  */
-public interface SupplierNewService {
+public interface ISupplierNewService {
 
     /**
      * 获取所有店铺的id和name，禁止修改

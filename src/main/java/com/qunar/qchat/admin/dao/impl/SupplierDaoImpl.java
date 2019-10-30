@@ -101,6 +101,13 @@ public class SupplierDaoImpl extends BaseSqlSessionDao implements ISupplierDao{
     }
 
     @Override
+    public Supplier getSupplierBySupplierName(String supplierName) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("supplierName", supplierName);
+        return this.getReadSqlSession().selectOne("SupplierMapping.getSupplierBySupplierName",map);
+    }
+
+    @Override
     public Supplier getSupplierByBusiSupplierIdEx(String busiSupplierId, int busiType) {
         Map<String, Object> map = new HashMap<>();
         map.put("busiSupplierId", new Long(busiSupplierId));

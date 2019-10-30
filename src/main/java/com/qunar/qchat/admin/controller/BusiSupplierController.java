@@ -122,7 +122,7 @@ public class BusiSupplierController {
     @ResponseBody
     public JsonResultVO<?> setBusiSupplier(@RequestParam(value = "busiSupplierId", defaultValue = "") String busiSupplierId,
                                            @RequestParam(value = "status", defaultValue =  "-1") int status,@RequestParam(value = "extFlag", defaultValue = "-1") int extFlag,
-                                           @RequestParam(value = "name", defaultValue = "") String name, @RequestParam(value = "assignStragegy", defaultValue = "-1") int assignStragegy
+                                           @RequestParam(value = "name", defaultValue = "") String name, @RequestParam(value = "assignStrategy", defaultValue = "-1") int assignStrategy
                                            ) {
         try {
             SysUserVO sysUserVO = SessionUtils.getLoginUser();
@@ -153,8 +153,8 @@ public class BusiSupplierController {
             if (status != -1) {
                 supplierDB.setStatus(status);
             }
-            if (assignStragegy != -1) {
-                supplierDB.setAssignStrategy(assignStragegy);
+            if (assignStrategy != -1) {
+                supplierDB.setAssignStrategy(assignStrategy);
             }
             supplierService.updateFullSupplier(supplierDB);
         //    supplierService.updateSupplierQunarNameMapping(sId, s.getQunarNameList());

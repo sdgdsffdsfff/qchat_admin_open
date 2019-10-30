@@ -3,16 +3,16 @@ package com.qunar.qchat.admin.GuavaCache;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.qunar.qchat.admin.model.Supplier;
-import com.qunar.qchat.admin.service.supplier.SupplierNewService;
+import com.qunar.qchat.admin.service.ISupplierNewService;
 import com.qunar.qchat.admin.util.CollectionUtil;
 import com.qunar.qchat.admin.util.query.SupplierIterator;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.search.suggest.analyzing.AnalyzingInfixSuggester;
 import org.apache.lucene.store.RAMDirectory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.Resource;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.TimeUnit;
@@ -29,8 +29,8 @@ public class SuggestCacheService {
 
     private static final String key = "supplier.suggest.cache";
 
-    @Resource
-    private SupplierNewService supplierNewService;
+    @Autowired
+    private ISupplierNewService supplierNewService;
 
     public AnalyzingInfixSuggester getSupplierSuggester() {
         try {

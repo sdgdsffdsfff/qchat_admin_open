@@ -33,6 +33,8 @@ public interface ISupplierDao {
 
     Supplier getSupplierByBusiSupplierId(String busiSupplierId,int busiType);
 
+    Supplier getSupplierBySupplierName(String supplierName);
+
     Supplier getSupplierByBusiSupplierIdEx(String busiSupplierId,int busiType);
 
     List<SupplierGroupVO> getSuGroupList(List<Long> suIdList);

@@ -105,17 +105,17 @@ public class SupplierServiceImpl implements ISupplierService {
         }
         logger.info("saveSupplier --- supplier info: " + JacksonUtil.obj2String(supplierVO));
 
-        String busiSupplierId = supplierVO.getBusiSupplierId();
-        SupplierVO supplierDB = this.getSupplierByBusiSupplierId(busiSupplierId, supplierVO.getBusiType());
+        String supplierName = supplierVO.getName();
+        Supplier supplierDB = supplierDao.getSupplierBySupplierName(supplierName);
         if (supplierDB != null) {
-            logger.warn("saveSupplier --- 业务线供应商已经存在, 业务供应商编号: {}", busiSupplierId);
+            logger.warn("saveSupplier --- 业务线供应商已经存在, 业务供应商编号: {}", supplierName);
             return BusiReturnResultUtil.buildReturnResult(BusiResponseCodeEnum.FAIL_REPEAT, false);
         }
 
         Supplier supplier = buildSupplierObj(supplierVO);
         long supplierId = supplierDao.saveSupplier(supplier);
         if (supplierId <= 0) {
-            logger.error("saveSupplier --- 添加供应商失败, 业务供应商编号: {}", busiSupplierId);
+            logger.error("saveSupplier --- 添加供应商失败, 业务供应商编号: {}", supplierName);
             return BusiReturnResultUtil.buildReturnResult(BusiResponseCodeEnum.FAIL_SERVER_EXCEPTION, false);
         }
 
@@ -172,6 +172,7 @@ public class SupplierServiceImpl implements ISupplierService {
         // 添加管理员账号
         addManager(supplierId, qNameList);
         // 添加与业务线映射关系
+        supplierVO.setBusiSupplierId("" + supplierId + supplierVO.getBusiType());
         addMapping(supplierVO, supplierId);
         // 添加与热线映射
         addHotlineMapping(supplierId);

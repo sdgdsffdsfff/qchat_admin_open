@@ -1,4 +1,4 @@
-package com.qunar.qchat.admin.service.supplier;
+package com.qunar.qchat.admin.service.impl;
 
 import com.google.common.base.Function;
 import com.google.common.base.Joiner;
@@ -6,14 +6,15 @@ import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import com.qunar.qchat.admin.GuavaCache.SuggestCacheService;
 import com.qunar.qchat.admin.dao.ISystemUserDao;
+import com.qunar.qchat.admin.dao.seat.GroupNewDao;
 import com.qunar.qchat.admin.dao.seat.SeatNewDao;
 import com.qunar.qchat.admin.dao.supplier.SupplierNewDao;
 import com.qunar.qchat.admin.model.*;
 import com.qunar.qchat.admin.service.ISeatService;
 import com.qunar.qchat.admin.service.ISupplierService;
 import com.qunar.qchat.admin.service.seat.GroupNewService;
+import com.qunar.qchat.admin.service.ISupplierNewService;
 import com.qunar.qchat.admin.util.CollectionUtil;
 import com.qunar.qchat.admin.util.LogUtil;
 import com.qunar.qchat.admin.vo.SeatOnlineState;
@@ -28,8 +29,8 @@ import java.util.Map;
 /**
  * Created by yinmengwang on 17-5-26.
  */
-@Service
-public class SupplierNewServiceImpl implements SupplierNewService {
+@Service("supplierNewService")
+public class SupplierNewServiceImpl implements ISupplierNewService {
 
     @Resource
     private ISeatService seatService;
@@ -40,9 +41,7 @@ public class SupplierNewServiceImpl implements SupplierNewService {
     @Resource
     private ISupplierService supplierService;
     @Resource
-    private SuggestCacheService suggestCacheService;
-    @Resource
-    private GroupNewService groupNewService;
+    private GroupNewDao groupNewDao;
     @Resource
     private ISystemUserDao systemUserDao;
 
@@ -166,9 +165,12 @@ public class SupplierNewServiceImpl implements SupplierNewService {
         // 删除管理员
         systemUserDao.delSystemUserBySupplierIds(onlineIds);
         // 删除客服组相关信息
-        groupNewService.deleteGroupBySupplierIds(onlineIds);
+        List<Long> groupIds = groupNewDao.queryGroupIdsBySupplierIds(supplierIds);
+        if (CollectionUtil.isEmpty(groupIds)) {
+            return true;
+        }
         LogUtil.doLog(LogEntity.OPERATE_DELETE, LogEntity.ITEM_SUPPLIER, null, null, LogEntity.OPERATOR_SYSTEM,
                 "supplierIds:" + Joiner.on(",").join(onlineIds));
-        return true;
+        return groupNewDao.deleteGroupBySupplierIds(groupIds) > 0;
     }
 }
