@@ -3,10 +3,7 @@ package com.qunar.qchat.admin.service.impl;
 import com.google.common.base.Splitter;
 import com.qunar.qchat.admin.constants.BusiResponseCodeEnum;
 import com.qunar.qchat.admin.constants.BusinessResponseCodeConstants;
-import com.qunar.qchat.admin.dao.IBusiSeatGroupMappingDao;
-import com.qunar.qchat.admin.dao.ISeatDao;
-import com.qunar.qchat.admin.dao.ISeatGroupDao;
-import com.qunar.qchat.admin.dao.ISeatGroupMappingDao;
+import com.qunar.qchat.admin.dao.*;
 import com.qunar.qchat.admin.model.*;
 import com.qunar.qchat.admin.service.ISeatGroupService;
 import com.qunar.qchat.admin.util.*;
@@ -48,15 +45,19 @@ public class SeatGroupServiceImpl implements ISeatGroupService {
 
     @Autowired
     IBusiSeatGroupMappingDao busiSeatGroupMappingDao;
+    @Autowired
+    ISupplierDao supplierDao;
 
     @Override
     public BusiReturnResult saveOrUpdateSeatGroup(SeatGroupVO seatGroupVO) {
         BusiReturnResult result = null;
-        if (seatGroupVO != null && CollectionUtil.isNotEmpty(seatGroupVO.getSuIdList())) {
-            for (Long suId : seatGroupVO.getSuIdList()) {
-                seatGroupVO.setSupplierId(suId);
-                result = this.saveOrUpdateSingleGroup(seatGroupVO);
-            }
+        Supplier supplierDB = supplierDao.getSupplierBySupplierName(seatGroupVO.getSupplierName());
+
+        if (supplierDB != null) {
+//            for (Long suId : seatGroupVO.getSuIdList()) {
+            seatGroupVO.setSupplierId(supplierDB.getId());
+            result = this.saveOrUpdateSingleGroup(seatGroupVO);
+//            }
         } else {
             result = this.saveOrUpdateSingleGroup(seatGroupVO);
         }

@@ -64,6 +64,9 @@ public class SeatGroupDaoImpl extends BaseSqlSessionDao implements ISeatGroupDao
         if (CollectionUtil.isNotEmpty(filter.getSuIdList())) {
             map.put("suIdList", filter.getSuIdList());
         }
+        if (CollectionUtil.isNotEmpty(filter.getSupplierNameList())) {
+            map.put("supplierNameList", filter.getSupplierNameList());
+        }
         if (StringUtils.isNotEmpty(filter.getGroupName())) {
             map.put("groupName", filter.getGroupName());
         }

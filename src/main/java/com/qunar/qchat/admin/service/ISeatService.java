@@ -202,7 +202,7 @@ public interface ISeatService {
      * @param pageSize
      * @return
      */
-    SeatListVO pageQuerySeatList(SeatQueryFilter filter, int pageNum, int pageSize);
+    Map<String, Object> pageQuerySeatList(SeatQueryFilter filter, int pageNum, int pageSize);
 
     /**
      * 删除坐席

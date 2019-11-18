@@ -13,6 +13,7 @@ import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.entity.mime.content.ByteArrayBody;
 import org.apache.http.impl.client.HttpClients;
@@ -23,6 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -360,6 +362,33 @@ public class HttpClientUtils {
             LOGGER.error("请求接口：{}失败，参数：{}", url, json, e);
         }
         return "";
+    }
+
+
+    public static String postFile(String url, InputStream inputStream, String fileName) {
+        checkArgument(StringUtils.isNotEmpty(url));
+        HttpClient hc = initHttpClient();
+        HttpPost post = new HttpPost(url);
+        String res = null;
+        try {
+            HttpEntity entity = MultipartEntityBuilder.create()
+                    .setMode(HttpMultipartMode.BROWSER_COMPATIBLE)
+                    .addBinaryBody("file", inputStream, ContentType.MULTIPART_FORM_DATA, fileName)
+                    .build();
+            post.setEntity(entity);
+            HttpResponse response = hc.execute(post);
+            int status = response.getStatusLine().getStatusCode();
+            if (status == HttpStatus.SC_OK) {
+                res = EntityUtils.toString(response.getEntity());
+            } else {
+                LOGGER.warn("postFile status:{}", status);
+            }
+        } catch (IOException e) {
+            LOGGER.error("postFile post", e);
+        } finally {
+            post.releaseConnection();
+        }
+        return res;
     }
 
     /**

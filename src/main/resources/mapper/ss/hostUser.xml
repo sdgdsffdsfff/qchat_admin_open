@@ -36,5 +36,9 @@
             </foreach>
         </if>
     </select>
+    <select id="searchUsersByUserId" resultType="com.qunar.qtalk.ss.workorder.bo.HostUserBO">
+        select user_id as userId,user_name as userName from host_users
+        where hire_flag=1 and (user_id like CONCAT('%',#{userId},'%') or user_name like CONCAT('%',#{userId},'%')) order by userName limit 50;
+    </select>
 </mapper>
 

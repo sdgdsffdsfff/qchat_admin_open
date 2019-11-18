@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -38,7 +39,7 @@ public class SeatGroupController extends BaseController{
     @MustLogin(MustLogin.ViewType.JSON)
     @ResponseBody
     @RequestMapping(value = "saveOrUpdateGroup.qunar")
-    public JsonResultVO<?> saveOrUpdateGroup(@RequestParam(value = "p", required = true, defaultValue = "") String p) {
+    public JsonResultVO<?> saveOrUpdateGroup(@RequestBody String p) {
         logger.info("saveOrUpdateGroup -- 请求参数 p: {}", p);
         SeatGroupVO sgVO = JacksonUtil.string2Obj(p, SeatGroupVO.class);
 
@@ -50,7 +51,7 @@ public class SeatGroupController extends BaseController{
     @MustLogin(MustLogin.ViewType.JSON)
     @ResponseBody
     @RequestMapping(value = "pageQueryGroupList.qunar")
-    public JsonResultVO<?> pageQueryGroupList(@RequestParam(value = "suIds", required = false, defaultValue = "") String suIds,
+    public JsonResultVO<?> pageQueryGroupList(@RequestParam(value = "suIds", required = false, defaultValue = "") List<String> suIds,
                                               @RequestParam(value = "groupName", required = false, defaultValue = "") String groupName,
                                               @RequestParam(value = "busiId", required = false, defaultValue = "0") int busiId,
                                               @RequestParam(value = "pageNum", required = false, defaultValue = "1") int pageNum,
@@ -60,21 +61,22 @@ public class SeatGroupController extends BaseController{
             return JsonResultUtil.buildFailedJsonResult(BusiResponseCodeEnum.FAIL_NOT_FOUND_RESULT.getCode(), "没有匹配客服组.");
         }
 
-        List<Long> suIdList = buildSuIdList(suIds, sysUserVO.getCurBuSuList());
-        if (CollectionUtil.isEmpty(suIdList)) {
-            return JsonResultUtil.buildFailedJsonResult(BusiResponseCodeEnum.FAIL_NOT_FOUND_RESULT.getCode(), "没有匹配客服组.");
-        }
+//        List<Long> suIdList = buildSuIdList(suIds, sysUserVO.getCurBuSuList());
+//        if (CollectionUtil.isEmpty(suIdList)) {
+//            return JsonResultUtil.buildFailedJsonResult(BusiResponseCodeEnum.FAIL_NOT_FOUND_RESULT.getCode(), "没有匹配客服组.");
+//        }
 
-        GroupQueryFilter fiter = buildQueryFilter(suIdList, groupName, sysUserVO.getbType().getId());
+        GroupQueryFilter fiter = buildQueryFilter(suIds, groupName, sysUserVO.getbType().getId());
         SeatGroupListVO groupList = seatGroupService.pageQueryGroupList(fiter, pageNum, pageSize);
         return JsonResultUtil.buildSucceedJsonResult(groupList);
     }
 
-    private GroupQueryFilter buildQueryFilter(List<Long> suIdList, String groupName, int busiId) {
+    private GroupQueryFilter buildQueryFilter(List<String> suIdList, String groupName, int busiId) {
         GroupQueryFilter fiter = new GroupQueryFilter();
-        fiter.setSuIdList(suIdList);
+//        fiter.setSuIdList(suIdList);
         fiter.setGroupName(groupName);
         fiter.setBusiId(busiId);
+        fiter.setSupplierNameList(suIdList);
        // fiter.setStrategy(strategyId);
         return fiter;
     }

@@ -6,6 +6,7 @@ import com.qunar.qchat.admin.dao.ISeatDao;
 import com.qunar.qchat.admin.model.*;
 import com.qunar.qchat.admin.util.CollectionUtil;
 import com.qunar.qchat.admin.util.SeatQueryFilter;
+import com.qunar.qchat.admin.vo.SeatVO;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Repository;
 
@@ -171,7 +172,7 @@ public class SeatDaoImpl extends BaseSqlSessionDao implements ISeatDao {
     }
 
     @Override
-    public List<Seat> pageQuerySeatList(SeatQueryFilter filter, int pageNum, int pageSize) {
+    public List<SeatVO> pageQuerySeatList(SeatQueryFilter filter, int pageNum, int pageSize) {
         Map<String, Object> map = new HashMap<>();
         buildPageQueryParams(filter, map);
 
@@ -191,6 +192,12 @@ public class SeatDaoImpl extends BaseSqlSessionDao implements ISeatDao {
         if (CollectionUtil.isNotEmpty(filter.getSuIdList())) {
             map.put("suIdList", filter.getSuIdList());
         }
+        if (CollectionUtil.isNotEmpty(filter.getSupplierNameList())) {
+            map.put("supplierNameList", filter.getSupplierNameList());
+        }
+        if (CollectionUtil.isNotEmpty(filter.getGroupList())) {
+            map.put("groupList", filter.getGroupList());
+        }
         if (StringUtils.isNotEmpty(filter.getQunarName())) {
             map.put("qunarName", filter.getQunarName());
         }
@@ -200,14 +207,14 @@ public class SeatDaoImpl extends BaseSqlSessionDao implements ISeatDao {
         if (filter.getBusiId() > 0) {
             map.put("busiId", filter.getBusiId());
         }
-        if (StringUtils.isNotEmpty(filter.getBySort())) {
-            map.put("sort", filter.getBySort());
-        }
     }
 
     @Override
-    public List<SeatGroupBusiMapping> getGroupAndBusiListBySeatId(List<Long> seatIds) {
-        return getReadSqlSession().selectList("SeatMapping.getGroupAndBusiListBySeatId", seatIds);
+    public List<SeatGroupBusiMapping> getGroupAndBusiListBySeatId(List<Long> seatIds, List<String> groupList) {
+        Map<String, Object> map = new HashMap<>();
+        map.put("list",seatIds);
+        map.put("groupList",groupList);
+        return getReadSqlSession().selectList("SeatMapping.getGroupAndBusiListBySeatId", map);
     }
 
     @Override

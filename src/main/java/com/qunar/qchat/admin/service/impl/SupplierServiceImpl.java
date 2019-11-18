@@ -98,7 +98,7 @@ public class SupplierServiceImpl implements ISupplierService {
     }
 
     @Override
-    public BusiReturnResult saveSupplier(SupplierVO supplierVO) {
+    public BusiReturnResult saveSupplier(SupplierVO supplierVO, String qunarName) {
         if (supplierVO == null) {
             logger.error("saveSupplier --- 参数不正确, supplierVO == null");
             return BusiReturnResultUtil.buildReturnResult(BusiResponseCodeEnum.FAIL_PARAM_INVALID, false);
@@ -119,7 +119,7 @@ public class SupplierServiceImpl implements ISupplierService {
             return BusiReturnResultUtil.buildReturnResult(BusiResponseCodeEnum.FAIL_SERVER_EXCEPTION, false);
         }
 
-        afterSet(supplierVO, supplierId);
+        afterSet(supplierVO, supplierId, qunarName);
 
         logger.info("saveSupplier --- 成功添加供应商,供应商编号:{}", supplierId);
         return BusiReturnResultUtil.buildReturnResult(BusiResponseCodeEnum.SUCCESS, true, supplierId);
@@ -127,7 +127,7 @@ public class SupplierServiceImpl implements ISupplierService {
 
 
     @Override
-    public BusiReturnResult saveSupplierEx(SupplierVO supplierVO) {
+    public BusiReturnResult saveSupplierEx(SupplierVO supplierVO, String qunarName) {
         if (supplierVO == null) {
             logger.error("saveSupplier --- 参数不正确, supplierVO == null");
             return BusiReturnResultUtil.buildReturnResult(BusiResponseCodeEnum.FAIL_PARAM_INVALID, false);
@@ -146,6 +146,7 @@ public class SupplierServiceImpl implements ISupplierService {
         supplier.setBQueue(supplierVO.getExt_flag());
         supplier.setStatus(supplierVO.getStatus());
         supplier.setbType(supplierVO.getBusiType());
+        supplier.setAssignStrategy(supplierVO.getAssignStrategy());
 
         long supplierId = supplierDao.saveSupplier(supplier);
         if (supplierId <= 0) {
@@ -153,7 +154,7 @@ public class SupplierServiceImpl implements ISupplierService {
             return BusiReturnResultUtil.buildReturnResult(BusiResponseCodeEnum.FAIL_SERVER_EXCEPTION, false);
         }
 
-        afterSet(supplierVO, supplierId);
+        afterSet(supplierVO, supplierId, qunarName);
 
         logger.info("saveSupplier --- 成功添加供应商,供应商编号:{}", supplierId);
         return BusiReturnResultUtil.buildReturnResult(BusiResponseCodeEnum.SUCCESS, true, supplierId);
@@ -164,11 +165,18 @@ public class SupplierServiceImpl implements ISupplierService {
     private Supplier buildSupplierObj(SupplierVO supplierVO) {
         Supplier supplier = new Supplier();
         supplier.setName(supplierVO.getName());
+        supplier.setAssignStrategy(supplierVO.getAssignStrategy());
+        supplier.setBQueue(supplierVO.getExt_flag());
+        supplier.setStatus(supplierVO.getStatus());
         return supplier;
     }
 
-    private void afterSet(SupplierVO supplierVO, long supplierId) {
+    private void afterSet(SupplierVO supplierVO, long supplierId, String qunarName) {
         List<String> qNameList = supplierVO.getQunarNameList();
+        if (StringUtils.isNotEmpty(qunarName)) {
+            qNameList = qNameList == null ? new ArrayList<>() : qNameList;
+            qNameList.add(qunarName);
+        }
         // 添加管理员账号
         addManager(supplierId, qNameList);
         // 添加与业务线映射关系

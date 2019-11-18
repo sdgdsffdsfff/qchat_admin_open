@@ -24,14 +24,14 @@ public interface ISupplierService {
      * @param supplierVO
      * @return
      */
-    public BusiReturnResult saveSupplier(SupplierVO supplierVO);
+    public BusiReturnResult saveSupplier(SupplierVO supplierVO, String qunarName);
 
     /**
      * 添加供应商
      * @param supplier
      * @return
      */
-    public BusiReturnResult saveSupplierEx(SupplierVO supplier);
+    public BusiReturnResult saveSupplierEx(SupplierVO supplier, String qunarName);
 
     /**
      * 编辑供应商信息

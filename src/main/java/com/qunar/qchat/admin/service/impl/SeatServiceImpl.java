@@ -1474,114 +1474,117 @@ public class SeatServiceImpl implements ISeatService {
     }
 
     @Override
-    public SeatListVO pageQuerySeatList(SeatQueryFilter filter, int pageNum, int pageSize) {
+    public Map<String, Object> pageQuerySeatList(SeatQueryFilter filter, int pageNum, int pageSize) {
         // 根据供应商编号\qunarName\webName\业务类型\  获取客服列表
+        Map<String, Object> result = new HashMap<>(2);
+        List<SeatVO> seatList = new ArrayList<>();
         long totalCount = seatDao.pageQuerySeatListCount(filter);
-        if (totalCount <= 0) {
-            return null;
+        if (totalCount > 0) {
+            seatList = seatDao.pageQuerySeatList(filter, pageNum, pageSize);
         }
-        logger.info("pageQuerySeatList SeatQueryFilter:{}", JacksonUtil.obj2String(filter));
-        List<Seat> seatList = seatDao.pageQuerySeatList(filter, pageNum, pageSize);
+        logger.info("pageQuerySeatList result:{}", JacksonUtils.obj2String(seatList));
+        result.put("totalCount", totalCount);
+        result.put("seatList", seatList);
+        return result;
+//        List<Long> seatIds = buildSeatIds(seatList);
+//
+//        List<BusiSeatMapping> bsList = null;
+//        List<SeatGroupBusiMapping> sgbList = null;
+//        if (CollectionUtil.isNotEmpty(seatIds)) {
+//            // 获取每个客服所属的业务
+//            bsList = seatDao.getSeatBusiListBySeatId(seatIds);
+//            // 获取每个客服所属组
+//            sgbList = seatDao.getGroupAndBusiListBySeatId(seatIds, filter.getGroupList());
+//        }
+//
+//        SeatListVO slVO = new SeatListVO();
+//        slVO.setTotalCount(totalCount);
+//        slVO.setPageNum(pageNum);
+//        slVO.setPageSise(pageSize);
+//
+//        Map<Long, List<BusiSeatMapping>> bsMap = null;
+//        if (CollectionUtil.isNotEmpty(bsList)) {
+//            bsMap = new HashMap<>();
+//            for (BusiSeatMapping bs : bsList) {
+//                List<BusiSeatMapping> bsmList = bsMap.get(bs.getSeatId());
+//                if (bsmList == null) {
+//                    bsmList = new ArrayList<>();
+//                }
+//                bsmList.add(bs);
+//                bsMap.put(bs.getSeatId(), bsmList);
+//            }
+//        }
+//
+//
+//        Map<String, List<SeatGroupBusiMapping>> sgbMap = null;
+//        if (CollectionUtil.isNotEmpty(sgbList)) {
+//            sgbMap = new HashMap<>();
+//            for (SeatGroupBusiMapping sgbm : sgbList) {
+//                String key = String.valueOf(sgbm.getSeatId()) + String.valueOf(sgbm.getBusiId());
+//                List<SeatGroupBusiMapping> sgbmList = sgbMap.get(key);
+//                if (sgbmList == null) {
+//                    sgbmList = new ArrayList<>();
+//                }
+//                sgbmList.add(sgbm);
+//                sgbMap.put(key, sgbmList);
+//            }
+//        }
+//
+//        List<SeatListSubVO> slsVOList = new ArrayList<>();
+//        for (SeatVO s : seatList) {
+//            long seatId = s.getId();
+//            SeatListSubVO seatListSubVO = new SeatListSubVO();
+//
+//            // 构造客服自身属性
+//            seatListSubVO.setId(s.getId());
+//            seatListSubVO.setQunarName(s.getQunarName());
+//            seatListSubVO.setWebName(s.getWebName());
+//            seatListSubVO.setPriority(s.getPriority());
+//            seatListSubVO.setFaceLink(s.getFaceLink());
+//            seatListSubVO.setNickName(s.getNickName());
+//            seatListSubVO.setCreateTime(s.getCreateTime());
+//            seatListSubVO.setSupplierId(s.getSupplierId());
+//            seatListSubVO.setSupplierName(s.getSupplierName());
+//            seatListSubVO.setMaxSessions(s.getMaxSessions());
+//            seatListSubVO.setServiceStatus(s.getServiceStatus());
+//            seatListSubVO.setBindWx(false);
+//            seatListSubVO.setHost(s.getHost());
+//
+//
+//            // 构造客服所属业务
+//            if (CollectionUtil.isNotEmpty(bsMap)) {
+//                List<BusinessVO> busiList = new ArrayList<>();
+//                List<BusiSeatMapping> bsmList = bsMap.get(seatId);
+//                if (bsmList != null) {
+//                    for (BusiSeatMapping bsm : bsmList) {
+//                        int busiId = bsm.getBusiId();
+//                        BusinessVO bVO = new BusinessVO();
+//                        bVO.setId(busiId);
+//                        bVO.setName(bsm.getBusiName());
+//                        if (CollectionUtil.isNotEmpty(sgbMap)) {
+//                            String key = String.valueOf(seatId) + String.valueOf(busiId);
+//                            List<SeatGroupBusiMapping> sgbmList = sgbMap.get(key);
+//                            if (sgbmList != null) {
+//                                List<SeatGroup> sgList = new ArrayList<SeatGroup>();
+//                                for (SeatGroupBusiMapping sgbm : sgbmList) {
+//                                    SeatGroup sg = new SeatGroup();
+//                                    sg.setId(sgbm.getGroupId());
+//                                    sg.setName(sgbm.getGroupName());
+//                                    sgList.add(sg);
+//                                }
+//                                bVO.setGroupList(sgList);
+//                            }
+//                        }
+//                        busiList.add(bVO);
+//                    }
+//                    seatListSubVO.setBusiList(busiList);
+//                }
+//            }
+//            slsVOList.add(seatListSubVO);
+//        }
+//        slVO.setSeatList(slsVOList);
 
-        List<Long> seatIds = buildSeatIds(seatList);
-
-        List<BusiSeatMapping> bsList = null;
-        List<SeatGroupBusiMapping> sgbList = null;
-        if (CollectionUtil.isNotEmpty(seatIds)) {
-            // 获取每个客服所属的业务
-            bsList = seatDao.getSeatBusiListBySeatId(seatIds);
-            // 获取每个客服所属组
-            sgbList = seatDao.getGroupAndBusiListBySeatId(seatIds);
-        }
-
-        SeatListVO slVO = new SeatListVO();
-        slVO.setTotalCount(totalCount);
-        slVO.setPageNum(pageNum);
-        slVO.setPageSise(pageSize);
-
-        Map<Long, List<BusiSeatMapping>> bsMap = null;
-        if (CollectionUtil.isNotEmpty(bsList)) {
-            bsMap = new HashMap<>();
-            for (BusiSeatMapping bs : bsList) {
-                List<BusiSeatMapping> bsmList = bsMap.get(bs.getSeatId());
-                if (bsmList == null) {
-                    bsmList = new ArrayList<>();
-                }
-                bsmList.add(bs);
-                bsMap.put(bs.getSeatId(), bsmList);
-            }
-        }
-
-
-        Map<String, List<SeatGroupBusiMapping>> sgbMap = null;
-        if (CollectionUtil.isNotEmpty(sgbList)) {
-            sgbMap = new HashMap<>();
-            for (SeatGroupBusiMapping sgbm : sgbList) {
-                String key = String.valueOf(sgbm.getSeatId()) + String.valueOf(sgbm.getBusiId());
-                List<SeatGroupBusiMapping> sgbmList = sgbMap.get(key);
-                if (sgbmList == null) {
-                    sgbmList = new ArrayList<>();
-                }
-                sgbmList.add(sgbm);
-                sgbMap.put(key, sgbmList);
-            }
-        }
-
-        List<SeatListSubVO> slsVOList = new ArrayList<>();
-        for (Seat s : seatList) {
-            long seatId = s.getId();
-            SeatListSubVO seatListSubVO = new SeatListSubVO();
-
-            // 构造客服自身属性
-            seatListSubVO.setId(s.getId());
-            seatListSubVO.setQunarName(s.getQunarName());
-            seatListSubVO.setWebName(s.getWebName());
-            seatListSubVO.setPriority(s.getPriority() == null ? 0 : s.getPriority());
-            seatListSubVO.setFaceLink(s.getFaceLink());
-            seatListSubVO.setNickName(s.getNickName());
-            seatListSubVO.setCreateTime(s.getCreateTime().getTime());
-            seatListSubVO.setSupplierId(s.getSupplierId());
-            seatListSubVO.setSupplierName(s.getSupplierName());
-            seatListSubVO.setMaxSessions(s.getMaxSessions());
-            seatListSubVO.setServiceStatus(s.getServiceStatus());
-            seatListSubVO.setBindWx(s.getBindWx() == BindWxStatus.BIND_WX.code);
-            seatListSubVO.setHost(s.getHost());
-
-
-            // 构造客服所属业务
-            if (CollectionUtil.isNotEmpty(bsMap)) {
-                List<BusinessVO> busiList = new ArrayList<>();
-                List<BusiSeatMapping> bsmList = bsMap.get(seatId);
-                if (bsmList != null) {
-                    for (BusiSeatMapping bsm : bsmList) {
-                        int busiId = bsm.getBusiId();
-                        BusinessVO bVO = new BusinessVO();
-                        bVO.setId(busiId);
-                        bVO.setName(bsm.getBusiName());
-                        if (CollectionUtil.isNotEmpty(sgbMap)) {
-                            String key = String.valueOf(seatId) + String.valueOf(busiId);
-                            List<SeatGroupBusiMapping> sgbmList = sgbMap.get(key);
-                            if (sgbmList != null) {
-                                List<SeatGroup> sgList = new ArrayList<SeatGroup>();
-                                for (SeatGroupBusiMapping sgbm : sgbmList) {
-                                    SeatGroup sg = new SeatGroup();
-                                    sg.setId(sgbm.getGroupId());
-                                    sg.setName(sgbm.getGroupName());
-                                    sgList.add(sg);
-                                }
-                                bVO.setGroupList(sgList);
-                            }
-                        }
-                        busiList.add(bVO);
-                    }
-                    seatListSubVO.setBusiList(busiList);
-                }
-            }
-            slsVOList.add(seatListSubVO);
-        }
-        slVO.setSeatList(slsVOList);
-
-        return slVO;
+//        return slVO;
     }
 
     @Override
@@ -1635,9 +1638,9 @@ public class SeatServiceImpl implements ISeatService {
 
     }
 
-    private List<Long> buildSeatIds(List<Seat> seatList) {
+    private List<Long> buildSeatIds(List<SeatVO> seatList) {
         List<Long> seatIdList = new ArrayList<>();
-        for (Seat s : seatList) {
+        for (SeatVO s : seatList) {
             seatIdList.add(s.getId());
         }
         return seatIdList;

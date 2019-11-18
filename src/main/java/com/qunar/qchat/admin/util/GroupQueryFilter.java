@@ -14,6 +14,8 @@ public class GroupQueryFilter {
     private long supplierId;
     private List<Long> suIdList;
 
+    private List<String> supplierNameList;
+
     public String getGroupName() {
         return groupName;
     }
@@ -44,5 +46,13 @@ public class GroupQueryFilter {
 
     public void setSuIdList(List<Long> suIdList) {
         this.suIdList = suIdList;
+    }
+
+    public List<String> getSupplierNameList() {
+        return supplierNameList;
+    }
+
+    public void setSupplierNameList(List<String> supplierNameList) {
+        this.supplierNameList = supplierNameList;
     }
 }

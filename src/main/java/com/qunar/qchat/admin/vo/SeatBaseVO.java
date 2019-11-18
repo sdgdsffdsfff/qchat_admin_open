@@ -1,5 +1,6 @@
 package com.qunar.qchat.admin.vo;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 /**
@@ -17,7 +18,7 @@ public class SeatBaseVO {
     private int businessId;
     private List<Long> suIdList;
     private String supplierName;
-    private long createTime;
+    private Timestamp createTime;
     private int serviceStatus;
     private int maxSessions;
     private boolean bindWx;
@@ -99,11 +100,11 @@ public class SeatBaseVO {
         this.supplierName = supplierName;
     }
 
-    public long getCreateTime() {
+    public Timestamp getCreateTime() {
         return createTime;
     }
 
-    public void setCreateTime(long createTime) {
+    public void setCreateTime(Timestamp createTime) {
         this.createTime = createTime;
     }
 

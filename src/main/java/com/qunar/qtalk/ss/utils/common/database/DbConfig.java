@@ -22,7 +22,7 @@ public class DbConfig {
     }
 
     public static String getPassword(String configKey) {
-        String defineKey = String.format("%s.password", configKey);
+        String defineKey = String.format("%s.pwd", configKey);
         String userPass = PropertiesUtil.getDBConfig().getProperty(defineKey);
         return userPass;
     }

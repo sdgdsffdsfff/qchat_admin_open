@@ -42,6 +42,7 @@
             <mvc:mapping path="/dashboard/**"/>
             <mvc:mapping path="/touch/dashboard/**"/>
             <mvc:mapping path="/notice/**"/>
+            <mvc:mapping path="/order/**"/>
             <mvc:exclude-mapping path="/notice/sayHello.json"/>
             <mvc:exclude-mapping path="/seat/getSeatList.json"/>
             <mvc:exclude-mapping path="/seat/transformCsr.json"/>

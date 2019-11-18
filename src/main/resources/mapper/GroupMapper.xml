@@ -40,10 +40,10 @@
             seat_group.supplier_id = #{supplierId} AND
         </if>
 
-        <if test="suIdList != null and suIdList.size > 0">
-            seat_group.supplier_id in
-            <foreach collection="suIdList" open="(" close=")" separator="," item="suId">
-                #{suId}
+        <if test="supplierNameList != null and supplierNameList.size > 0">
+            su.name in
+            <foreach collection="supplierNameList" open="(" close=")" separator="," item="suName">
+                #{suName}
             </foreach>
             AND
         </if>
@@ -71,10 +71,10 @@
     <select id="pageQueryGroupListCount" parameterType="map" resultType="int">
         SELECT
           count(1)
-        FROM seat_group
+        FROM seat_group , supplier su
         WHERE
         <include refid="pageQueryGroupListSQL"/>
-        1 = 1
+        seat_group.supplier_id = su.id
     </select>
 
     <select id="getGroup" parameterType="map" resultType="SeatGroup">

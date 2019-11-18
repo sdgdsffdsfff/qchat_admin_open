@@ -7,8 +7,8 @@
 	</select>
 
     <insert id="saveSupplier" parameterType="com.qunar.qchat.admin.model.Supplier" useGeneratedKeys="true">
-        insert into supplier(name, status)
-        values (#{name}, 1)
+        insert into supplier(name, status,assign_strategy, ext_flag)
+        values (#{name}, #{status}, #{assignStrategy},#{bQueue})
         <selectKey resultType="long" order="AFTER" keyProperty="id">
             SELECT currval('supplier_id_seq')
         </selectKey>
@@ -57,8 +57,8 @@
                         left join robot_supplier_mapping as rsm on s.id = rsm.supplier_id
                         left join robot_info as ri on ri.robot_id = rsm.robot_id
         WHERE  su.qunar_name = #{qunarName}
-        and s.status = 1 and bsm.busi_id=#{businessId} and bsm.status = 1
-        ORDER BY s.id ASC
+        and s.status != 0 and bsm.busi_id=#{businessId} and bsm.status = 1
+        ORDER BY s.id desc
         limit #{pageSize} OFFSET #{offset}
     </select>
 
@@ -73,7 +73,7 @@
     </select>
 
 
-    <select id="getSupplierBySeatQName" parameterType="String" resultType="com.qunar.qchat.admin.model.Supplier">
+    <select id="getSupplierBySeatQName" parameterType="map" resultType="com.qunar.qchat.admin.model.Supplier">
         SELECT su.id, su.name, bsm.busi_id AS bType, sm.busi_supplier_id as busiSupplierId, su.create_time as createDate FROM supplier su, seat s, busi_seat_mapping bsm, busi_supplier_mapping sm
         WHERE su.id = s.supplier_id and s.id = bsm.seat_id and sm.supplier_id = su.id and s.qunar_name = #{qName} and s.status = 1 and bsm.busi_id = #{bType}
         and su.status = 1 and bsm.status = 1 and sm.status = 1

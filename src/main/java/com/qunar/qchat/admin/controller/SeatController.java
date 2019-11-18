@@ -28,6 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -96,7 +97,7 @@ public class SeatController extends BaseController{
     @MustLogin(MustLogin.ViewType.JSON)
     @ResponseBody
     @RequestMapping(value = "saveOrUpdateSeat.qunar")
-    public JsonResultVO<?> saveOrUpdateSeat(@RequestParam(value = "p", required = true, defaultValue = "") String p) {
+    public JsonResultVO<?> saveOrUpdateSeat(@RequestBody String p) {
         logger.info("saveOrUpdateSeat -- p: {}", p);
         SeatVO seatVO = JacksonUtil.string2Obj(p, SeatVO.class);
 
@@ -107,11 +108,11 @@ public class SeatController extends BaseController{
     @MustLogin(MustLogin.ViewType.JSON)
     @ResponseBody
     @RequestMapping(value = "pageQuerySeatList.qunar")
-    public JsonResultVO<?> pageQuerySeatList(@RequestParam(value = "suIds", required = false, defaultValue = "") String suIds,
+    public JsonResultVO<?> pageQuerySeatList(@RequestParam(value = "suIds", required = false, defaultValue = "") List<String> suIds,
+                                             @RequestParam(value = "groupList", required = false, defaultValue = "") List<String> groupList,
                                              @RequestParam(value = "qunarName", required = false, defaultValue = "") String qunarName,
                                              @RequestParam(value = "webName", required = false, defaultValue = "") String webName,
                                              @RequestParam(value = "busiType", required = false, defaultValue = "0") int busiType,
-                                             @RequestParam(value = "bySort", required = false, defaultValue = "") String bySort,
                                              @RequestParam(value = "pageNum", required = false, defaultValue = "1") int pageNum,
                                              @RequestParam(value = "pageSize", required = false, defaultValue = "15") int pageSize) {
         SysUserVO sysUserVO = SessionUtils.getLoginUser();
@@ -119,23 +120,24 @@ public class SeatController extends BaseController{
             return JsonResultUtil.buildFailedJsonResult(BusiResponseCodeEnum.FAIL_NOT_FOUND_RESULT.getCode(), "没有匹配客服.");
         }
 
-        List<Long> suIdList = buildSuIdList(suIds, sysUserVO.getCurBuSuList());
-        if (CollectionUtil.isEmpty(suIdList)) {
-            return JsonResultUtil.buildFailedJsonResult(BusiResponseCodeEnum.FAIL_NOT_FOUND_RESULT.getCode(), "没有匹配客服.");
-        }
+//        List<Long> suIdList = buildSuIdList(suIds, sysUserVO.getCurBuSuList());
+//        if (CollectionUtil.isEmpty(suIdList)) {
+//            return JsonResultUtil.buildFailedJsonResult(BusiResponseCodeEnum.FAIL_NOT_FOUND_RESULT.getCode(), "没有匹配客服.");
+//        }
 
-        SeatQueryFilter fiter = buildQueryParam(suIdList, qunarName, webName, sysUserVO.getbType().getId(), bySort);
-        SeatListVO seatListVO = seatService.pageQuerySeatList(fiter, pageNum, pageSize);
+        SeatQueryFilter fiter = buildQueryParam(suIds,groupList, qunarName, webName, sysUserVO.getbType().getId());
+        Map<String, Object> seatListVO = seatService.pageQuerySeatList(fiter, pageNum, pageSize);
         return JsonResultUtil.buildSucceedJsonResult(seatListVO);
     }
 
-    private SeatQueryFilter buildQueryParam(List<Long> suIdList, String qunarName, String webName, int busiType, String bySort) {
+    private SeatQueryFilter buildQueryParam(List<String> suIdList, List<String> groupList, String qunarName, String webName, int busiType) {
         SeatQueryFilter fiter = new SeatQueryFilter();
-        fiter.setSuIdList(suIdList);
+//        fiter.setSuIdList(suIdList);
+        fiter.setSupplierNameList(suIdList);
+        fiter.setGroupList(groupList);
         fiter.setQunarName(qunarName);
         fiter.setWebName(webName);
         fiter.setBusiId(busiType);
-        fiter.setBySort(bySort);
         return fiter;
     }
 

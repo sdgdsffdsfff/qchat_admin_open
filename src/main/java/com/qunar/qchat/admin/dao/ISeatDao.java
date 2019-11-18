@@ -2,6 +2,7 @@ package com.qunar.qchat.admin.dao;
 
 import com.qunar.qchat.admin.model.*;
 import com.qunar.qchat.admin.util.SeatQueryFilter;
+import com.qunar.qchat.admin.vo.SeatVO;
 
 import java.util.List;
 
@@ -73,11 +74,11 @@ public interface ISeatDao {
 
     int updateSeatByQunarName(String qunarName, String newWebName);
 
-    List<Seat> pageQuerySeatList(SeatQueryFilter filter, int pageNum, int pageSize);
+    List<SeatVO> pageQuerySeatList(SeatQueryFilter filter, int pageNum, int pageSize);
 
     long pageQuerySeatListCount(SeatQueryFilter filter);
 
-    List<SeatGroupBusiMapping> getGroupAndBusiListBySeatId(List<Long> seatIds);
+    List<SeatGroupBusiMapping> getGroupAndBusiListBySeatId(List<Long> seatIds, List<String> groupList);
 
     List<BusiSeatMapping> getSeatBusiListBySeatId(List<Long> seatIds);
 

@@ -13,6 +13,8 @@ import com.qunar.qchat.admin.model.SysUserUpdateRequest;
 import com.qunar.qchat.admin.service.ISeatService;
 import com.qunar.qchat.admin.service.ISupplierService;
 import com.qunar.qchat.admin.service.ISupplierNewService;
+import com.qunar.qchat.admin.util.AuthorityUtil;
+import javax.servlet.http.HttpServletRequest;
 import com.qunar.qchat.admin.util.CollectionUtil;
 import com.qunar.qchat.admin.util.JacksonUtil;
 import com.qunar.qchat.admin.util.JsonResultUtil;
@@ -67,7 +69,7 @@ public class SupplierInnerAPIController {
 
     @ResponseBody
     @RequestMapping(value = "/saveSupplier.qunar")
-    public JsonResultVO<?> saveSupplier(@RequestBody String p) {
+    public JsonResultVO<?> saveSupplier(@RequestBody String p, HttpServletRequest request) {
         logger.info("saveSupplier -- 请求参数 p: {}", p);
         SupplierVO s = JacksonUtil.string2Obj(p, SupplierVO.class);
         if (null == s) {
@@ -77,8 +79,14 @@ public class SupplierInnerAPIController {
         }
 
         try {
-            BusiReturnResult result = supplierService.saveSupplier(s);
-            return JsonResultUtil.buildSucceedJsonResult(result.getCode(), result.getMsg(), "");
+            String qunarName = AuthorityUtil.getThirdPartyUserName(request);
+            BusiReturnResult result = supplierService.saveSupplier(s, qunarName);
+            if (result.isRet()) {
+                return JsonResultUtil.buildSucceedJsonResult(result.getCode(), result.getMsg(), "");
+            } else {
+                return JsonResultUtil.buildFailedJsonResult(result.getCode(), result.getMsg());
+            }
+
         } catch (Exception e) {
             logger.error("saveSupplier -- 添加供应商发生异常", e);
             return JsonResultUtil.buildFailedJsonResult(BusiResponseCodeEnum.FAIL_SERVER_EXCEPTION.getCode(),

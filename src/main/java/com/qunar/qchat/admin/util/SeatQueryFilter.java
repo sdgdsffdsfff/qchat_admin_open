@@ -15,6 +15,8 @@ public class SeatQueryFilter {
 
     private long supplierId;
     private List<Long> suIdList;
+    private List<String> supplierNameList;
+    private List<String> groupList;
 
     private String bySort;
 
@@ -64,5 +66,21 @@ public class SeatQueryFilter {
 
     public void setSupplierId(long supplierId) {
         this.supplierId = supplierId;
+    }
+
+    public List<String> getSupplierNameList() {
+        return supplierNameList;
+    }
+
+    public void setSupplierNameList(List<String> supplierNameList) {
+        this.supplierNameList = supplierNameList;
+    }
+
+    public List<String> getGroupList() {
+        return groupList;
+    }
+
+    public void setGroupList(List<String> groupList) {
+        this.groupList = groupList;
     }
 }

@@ -6,6 +6,7 @@ package com.qunar.qchat.admin.controller;
 import com.qunar.qchat.admin.constants.BusiResponseCodeEnum;
 import com.qunar.qchat.admin.dao.supplier.SupplierNewDao;
 import com.qunar.qchat.admin.service.ISupplierService;
+import com.qunar.qchat.admin.util.AuthorityUtil;
 import com.qunar.qchat.admin.util.JacksonUtil;
 import com.qunar.qchat.admin.util.JsonResultUtil;
 import com.qunar.qchat.admin.vo.BusiReturnResult;
@@ -13,11 +14,12 @@ import com.qunar.qchat.admin.vo.JsonResultVO;
 import com.qunar.qchat.admin.vo.SupplierVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 
 
 /**
@@ -36,7 +38,7 @@ public class BusiSupplierExController {
 
     @ResponseBody
     @RequestMapping(value = "/saveBusiSupplier.qunar")
-    public JsonResultVO<?> saveBusiSupplier(@RequestParam(value = "p", required = true, defaultValue = "") String p) {
+    public JsonResultVO<?> saveBusiSupplier(@RequestBody String p, HttpServletRequest request) {
       //  logger.info("saveSupplier -- 请求参数 p: {}", p);
         SupplierVO s = JacksonUtil.string2Obj(p, SupplierVO.class);
         if (null == s) {
@@ -46,7 +48,8 @@ public class BusiSupplierExController {
         }
 
         try {
-            BusiReturnResult result = supplierService.saveSupplierEx(s);
+            String qunarName = AuthorityUtil.getThirdPartyUserName(request);
+            BusiReturnResult result = supplierService.saveSupplierEx(s,qunarName);
             return JsonResultUtil.buildSucceedJsonResult(result.getCode(), result.getMsg(), "");
         } catch (Exception e) {
           //  logger.error("saveSupplier -- 添加供应商发生异常", e);
