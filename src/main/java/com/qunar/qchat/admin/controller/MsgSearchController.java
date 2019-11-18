@@ -1,11 +1,13 @@
 package com.qunar.qchat.admin.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Strings;
 import com.qunar.qchat.admin.model.qchat.QChatConstant;
 import com.qunar.qchat.admin.model.third.QChatForTransferParam;
 import com.qunar.qchat.admin.service.HistoryMsgService;
 import com.qunar.qchat.admin.util.AuthorityUtil;
 import com.qunar.qchat.admin.util.JacksonUtil;
+import com.qunar.qchat.admin.util.RedisUtil;
 import com.qunar.qchat.admin.vo.conf.JsonData;
 import com.qunar.qtalk.ss.session.service.ConsultMessageService;
 import com.qunar.qtalk.ss.utils.JID;
@@ -23,6 +25,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import java.sql.Timestamp;
 import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 @Controller
 @RequestMapping("/msg")
@@ -100,6 +104,27 @@ public class MsgSearchController {
         }
 
         return JsonData.success("success");
+    }
+
+    @RequestMapping(value = "/getToken.qunar")
+    @ResponseBody
+    public JsonData getToken(HttpServletRequest request) {
+        logger.info("getToken begin.....");
+        JSONObject result = new JSONObject();
+        result.put("username", "admin");
+        result.put("switchOn", true);
+        String token = UUID.randomUUID().toString();
+        JSONObject tokenJson = new JSONObject();
+        JSONObject platJson = new JSONObject();
+        tokenJson.put("anony", platJson);
+        platJson.put("plat", "web");
+        platJson.put("uuid", "admin");
+        platJson.put("token", token);
+        result.put("token", tokenJson.toString());
+        String key = "web" + "admin";
+        RedisUtil.set(1, key, tokenJson.toString(), 1, TimeUnit.DAYS);
+
+        return JsonData.success(result);
     }
 
 }
